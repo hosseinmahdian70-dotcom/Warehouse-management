@@ -6,10 +6,12 @@
     <title>سیستم مدیریت انبار</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <!-- ===== Firebase SDK ===== -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
     <style>
-        /* ============================================================ */
-        /* استایل‌ها (همانند قبل) */
-        /* ============================================================ */
         * {
             margin: 0;
             padding: 0;
@@ -1299,7 +1301,6 @@
             }
         }
         
-        /* استایل جدید برای دکمه‌های PDF در تاریخچه */
         .btn-pdf-history {
             background: #e74c3c;
             border: none;
@@ -1768,23 +1769,39 @@
 
     <script>
         // ============================================================
-        //  داده‌ها
+        // ===== پیکربندی Firebase =====
         // ============================================================
-        var inventory = [
-            { id: 1, name: 'لپ‌تاپ ایسوس', code: '03-00001', category: 'الکترونیک', quantity: 5, threshold: 2 },
-            { id: 2, name: 'مانیتور سامسونگ', code: '03-00002', category: 'الکترونیک', quantity: 0, threshold: 3 },
-            { id: 3, name: 'صندلی اداری', code: '07-00001', category: 'چوبی', quantity: 12, threshold: 4 },
-            { id: 4, name: 'کیبورد مکانیکی', code: '03-00003', category: 'الکترونیک', quantity: 3, threshold: 2 },
-            { id: 5, name: 'میز کارگردان', code: '07-00002', category: 'چوبی', quantity: 1, threshold: 2 },
-            { id: 6, name: 'هارد اکسترنال 2TB', code: '03-00004', category: 'الکترونیک', quantity: 7, threshold: 5 },
-            { id: 7, name: 'موتور برق', code: '02-00001', category: 'برق', quantity: 2, threshold: 3 },
-            { id: 8, name: 'کاغذ A4 (بسته)', code: '10-00001', category: 'سایر', quantity: 20, threshold: 10 },
-        ];
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-4nF6CqJk7xY6R5T4W3Q2P1O0I9U8Y7T6R5E4W3Q",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef123456"
+        };
 
+        // ===== IMPORTANT: جایگزین کنید =====
+        // کد بالا یک نمونه است. باید کد واقعی Firebase خود را جایگزین کنید.
+        // برای دریافت کد واقعی:
+        // 1. به https://console.firebase.google.com بروید
+        // 2. پروژه خود را انتخاب کنید
+        // 3. روی آیکون Settings (چرخ دنده) > Project Settings کلیک کنید
+        // 4. پایین بروید و روی آیکون Web (</>) کلیک کنید
+        // 5. کد firebaseConfig را کپی کنید و جایگزین کنید
+
+        // مقداردهی اولیه Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // ============================================================
+        // ===== متغیرهای سراسری =====
+        // ============================================================
+        var inventory = [];
         var requests = [];
         var exitHistory = [];
         var entryHistory = [];
-        var nextItemId = 9;
+        var nextItemId = 1;
         var nextRequestId = 1;
         var nextExitId = 1;
         var nextEntryId = 1;
@@ -1798,11 +1815,64 @@
         var currentRole = 'warehouse';
         var currentViewRequestId = null;
         var filterStatus = 'all';
+        var isDataLoaded = false;
 
         // ============================================================
-        //  توابع ذخیره‌سازی در LocalStorage
+        // ===== توابع خواندن و نوشتن در Firebase =====
         // ============================================================
-        function saveData() {
+        function loadAllData() {
+            database.ref('/').once('value').then(function(snapshot) {
+                var data = snapshot.val();
+                if (data) {
+                    inventory = data.inventory || [];
+                    requests = data.requests || [];
+                    exitHistory = data.exitHistory || [];
+                    entryHistory = data.entryHistory || [];
+                    nextItemId = data.nextItemId || 1;
+                    nextRequestId = data.nextRequestId || 1;
+                    nextExitId = data.nextExitId || 1;
+                    nextEntryId = data.nextEntryId || 1;
+                    isDataLoaded = true;
+                    console.log('✅ داده‌ها از Firebase بارگذاری شدند!');
+                } else {
+                    console.log('📭 داده‌ای در Firebase وجود ندارد، ایجاد داده‌های پیش‌فرض...');
+                    createDefaultData();
+                }
+                renderAll();
+            }).catch(function(error) {
+                console.error('❌ خطا در بارگذاری داده‌ها از Firebase:', error);
+                loadFromLocalStorage();
+            });
+        }
+
+        function saveAllData() {
+            if (!isDataLoaded) return;
+            
+            var data = {
+                inventory: inventory,
+                requests: requests,
+                exitHistory: exitHistory,
+                entryHistory: entryHistory,
+                nextItemId: nextItemId,
+                nextRequestId: nextRequestId,
+                nextExitId: nextExitId,
+                nextEntryId: nextEntryId,
+                lastUpdate: new Date().toISOString()
+            };
+            
+            database.ref('/').set(data).then(function() {
+                console.log('✅ داده‌ها در Firebase ذخیره شدند!');
+                saveToLocalStorage();
+            }).catch(function(error) {
+                console.error('❌ خطا در ذخیره‌سازی در Firebase:', error);
+                saveToLocalStorage();
+            });
+        }
+
+        // ============================================================
+        // ===== توابع پشتیبان LocalStorage =====
+        // ============================================================
+        function saveToLocalStorage() {
             try {
                 var data = {
                     inventory: inventory,
@@ -1815,30 +1885,119 @@
                     nextEntryId: nextEntryId
                 };
                 localStorage.setItem('warehouseData', JSON.stringify(data));
+                console.log('💾 داده‌ها در LocalStorage ذخیره شدند (پشتیبان)');
             } catch (e) {
-                console.warn('خطا در ذخیره‌سازی داده‌ها:', e);
+                console.warn('خطا در ذخیره‌سازی LocalStorage:', e);
             }
         }
 
-        function loadData() {
+        function loadFromLocalStorage() {
             try {
                 var saved = localStorage.getItem('warehouseData');
                 if (saved) {
                     var data = JSON.parse(saved);
-                    inventory = data.inventory || inventory;
+                    inventory = data.inventory || [];
                     requests = data.requests || [];
                     exitHistory = data.exitHistory || [];
                     entryHistory = data.entryHistory || [];
-                    nextItemId = data.nextItemId || 9;
+                    nextItemId = data.nextItemId || 1;
                     nextRequestId = data.nextRequestId || 1;
                     nextExitId = data.nextExitId || 1;
                     nextEntryId = data.nextEntryId || 1;
-                    return true;
+                    isDataLoaded = true;
+                    console.log('📂 داده‌ها از LocalStorage بارگذاری شدند');
+                    renderAll();
+                } else {
+                    createDefaultData();
                 }
             } catch (e) {
-                console.warn('خطا در بارگذاری داده‌ها:', e);
+                console.warn('خطا در بارگذاری LocalStorage:', e);
+                createDefaultData();
             }
-            return false;
+        }
+
+        // ============================================================
+        // ===== داده‌های پیش‌فرض =====
+        // ============================================================
+        function createDefaultData() {
+            inventory = [
+                { id: 1, name: 'لپ‌تاپ ایسوس', code: '03-00001', category: 'الکترونیک', quantity: 5, threshold: 2 },
+                { id: 2, name: 'مانیتور سامسونگ', code: '03-00002', category: 'الکترونیک', quantity: 0, threshold: 3 },
+                { id: 3, name: 'صندلی اداری', code: '07-00001', category: 'چوبی', quantity: 12, threshold: 4 },
+                { id: 4, name: 'کیبورد مکانیکی', code: '03-00003', category: 'الکترونیک', quantity: 3, threshold: 2 },
+                { id: 5, name: 'میز کارگردان', code: '07-00002', category: 'چوبی', quantity: 1, threshold: 2 },
+                { id: 6, name: 'هارد اکسترنال 2TB', code: '03-00004', category: 'الکترونیک', quantity: 7, threshold: 5 },
+                { id: 7, name: 'موتور برق', code: '02-00001', category: 'برق', quantity: 2, threshold: 3 },
+                { id: 8, name: 'کاغذ A4 (بسته)', code: '10-00001', category: 'سایر', quantity: 20, threshold: 10 },
+            ];
+            
+            requests = [];
+            exitHistory = [];
+            entryHistory = [];
+            nextItemId = 9;
+            nextRequestId = 1;
+            nextExitId = 1;
+            nextEntryId = 1;
+
+            // اضافه کردن درخواست‌های نمونه
+            var req1 = {
+                id: nextRequestId++,
+                requestNumber: '1402-01-001',
+                type: 'consumable',
+                items: [{ itemId: 1, quantity: 2 }, { itemId: 8, quantity: 5 }],
+                requester: 'رضا محمدی',
+                priority: 'normal',
+                description: 'برای تعمیرات',
+                status: 'approved',
+                date: new Date().toLocaleDateString('fa-IR')
+            };
+            requests.push(req1);
+
+            var req2 = {
+                id: nextRequestId++,
+                requestNumber: '1402-01-002',
+                type: 'returnable',
+                items: [{ itemId: 3, quantity: 1 }],
+                requester: 'علی کریمی',
+                priority: 'urgent',
+                description: 'ابزار مورد نیاز',
+                status: 'approved',
+                date: new Date().toLocaleDateString('fa-IR')
+            };
+            requests.push(req2);
+
+            var req3 = {
+                id: nextRequestId++,
+                requestNumber: '1402-01-003',
+                type: 'purchase',
+                items: [{ itemId: 7, quantity: 10 }],
+                requester: 'سارا حسینی',
+                priority: 'critical',
+                description: 'ذخیره اضطراری',
+                status: 'production',
+                date: new Date().toLocaleDateString('fa-IR')
+            };
+            requests.push(req3);
+
+            isDataLoaded = true;
+            saveAllData();
+            renderAll();
+            console.log('📦 داده‌های پیش‌فرض ایجاد شدند!');
+        }
+
+        // ============================================================
+        // ===== تابع رندر همه چیز =====
+        // ============================================================
+        function renderAll() {
+            if (typeof renderTable === 'function') renderTable();
+            if (typeof updateStats === 'function') updateStats();
+            if (typeof populateSelects === 'function') populateSelects();
+            if (typeof populateExitRequests === 'function') populateExitRequests();
+            if (typeof renderRequests === 'function') renderRequests();
+            if (typeof renderExitHistory === 'function') renderExitHistory();
+            if (typeof renderEntryHistory === 'function') renderEntryHistory();
+            if (typeof updateDatalists === 'function') updateDatalists();
+            if (typeof clearRequestItems === 'function') clearRequestItems();
         }
 
         // ============================================================
@@ -2220,7 +2379,7 @@
         }
 
         // ============================================================
-        //  توابع PDF درخواست و لیست کالاها (همانند قبل)
+        //  توابع PDF درخواست و لیست کالاها
         // ============================================================
         window.generateRequestPDF = function(id) {
             var req = findRequestById(id);
@@ -2581,7 +2740,7 @@
                 populateExitRequests();
                 updateDatalists();
                 clearRequestItems();
-                saveData();
+                saveAllData();
                 showMessage(exitMessage, '✅ کالا "' + item.name + '" با موفقیت حذف شد.', 'success');
             }
         };
@@ -2640,7 +2799,7 @@
             populateExitRequests();
             updateDatalists();
             clearRequestItems();
-            saveData();
+            saveAllData();
             showMessage(exitMessage, '✅ کالا با موفقیت ویرایش شد.', 'success');
         }
 
@@ -2768,7 +2927,6 @@
         }
 
         function populateExitRequests() {
-            // ===== فقط درخواست‌های تایید شده که نوع خرید نیستند نمایش داده شوند =====
             var approvedRequests = requests.filter(function(r) {
                 return r.status === 'approved' && r.type !== 'purchase';
             });
@@ -2807,7 +2965,7 @@
             populateExitRequests();
             updateDatalists();
             clearRequestItems();
-            saveData();
+            saveAllData();
         }
 
         function showMessage(el, text, type) {
@@ -2902,7 +3060,6 @@
                     var canUndo = false;
                     var canDelete = false;
 
-                    // ===== تنظیم دسترسی‌ها =====
                     if (req.status === 'pending') {
                         if (currentRole === 'warehouse') {
                             canApprove = true;
@@ -3028,7 +3185,7 @@
 
             updateStats();
             populateExitRequests();
-            saveData();
+            saveAllData();
         }
 
         // ============================================================
@@ -3079,7 +3236,7 @@
                 }
                 requests = newRequests;
                 renderRequests();
-                saveData();
+                saveAllData();
                 showMessage(requestMessage, '✅ درخواست توسط ' + roleName + ' حذف شد.', 'success');
             }
         };
@@ -3129,7 +3286,7 @@
             req.status = nextStatus;
             renderRequests();
             renderTable();
-            saveData();
+            saveAllData();
             showMessage(requestMessage, '✅ درخواست توسط ' + roleName + ' تایید شد.', 'success');
         }
 
@@ -3169,7 +3326,7 @@
             if (confirm('آیا از رد این درخواست توسط ' + roleName + ' مطمئن هستید؟')) {
                 req.status = 'rejected';
                 renderRequests();
-                saveData();
+                saveAllData();
                 showMessage(requestMessage, '⚠️ درخواست توسط ' + roleName + ' رد شد.', 'error');
             }
         }
@@ -3243,7 +3400,7 @@
             if (confirm('آیا از برگشت تصمیم توسط ' + roleName + ' مطمئن هستید؟\nوضعیت از "' + getStatusText(statusBefore) + '" به "' + getStatusText(undoStatus) + '" تغییر می‌کند.')) {
                 req.status = undoStatus;
                 renderRequests();
-                saveData();
+                saveAllData();
                 showMessage(requestMessage, '🔄 تصمیم توسط ' + roleName + ' برگشت داده شد.', 'success');
             }
         }
@@ -3319,7 +3476,7 @@
                 showMessage(requestMessage, '✅ درخواست ' + requestNumber + ' ثبت و تایید شد.', 'success');
             }
             renderRequests();
-            saveData();
+            saveAllData();
         });
 
         // ============================================================
@@ -3457,7 +3614,7 @@
             renderExitHistory();
             updateDatalists();
             clearRequestItems();
-            saveData();
+            saveAllData();
             showMessage(exitMessage, '✅ ' + itemNames.join('، ') + ' به ' + receiver + ' تحویل داده شد.', 'success');
             exitReceiver.value = '';
         });
@@ -3507,7 +3664,7 @@
                 updateDatalists();
                 clearRequestItems();
                 renderEntryHistory();
-                saveData();
+                saveAllData();
                 showMessage(entryMessage, '✅ ' + qty + ' عدد از ' + item.name + ' توسط ' + supplier + ' به انبار اضافه شد. موجودی جدید: ' + item.quantity,
                     'success');
                 entryQuantity.value = '1';
@@ -3582,16 +3739,8 @@
                     localStorage.removeItem('rememberedUser');
                     localStorage.removeItem('rememberedPass');
                 }
-                loadData();
-                renderTable();
-                updateStats();
-                populateSelects();
-                populateExitRequests();
-                renderRequests();
-                renderExitHistory();
-                renderEntryHistory();
-                showPage('dashboard');
-                clearRequestItems();
+                loadAllData();
+                renderAll();
                 loadSettings();
             } else {
                 alert('نام کاربری یا رمز عبور اشتباه است.');
@@ -3600,7 +3749,7 @@
 
         function logout() {
             if (confirm('آیا مطمئن هستید که می‌خواهید خارج شوید؟')) {
-                saveData();
+                saveAllData();
                 dashboardWrapper.classList.remove('active');
                 loginPage.style.display = 'block';
                 passwordInput.value = '';
@@ -3651,7 +3800,7 @@
         });
 
         backupBtn.addEventListener('click', function() {
-            saveData();
+            saveAllData();
             var data = {
                 inventory: inventory,
                 requests: requests,
@@ -3765,7 +3914,6 @@
             }, 1000);
         });
 
-        // ===== دکمه‌های PDF تاریخچه =====
         document.getElementById('exportExitHistoryPdf').addEventListener('click', function() {
             exportExitHistoryPDF();
         });
@@ -3848,68 +3996,11 @@
             }
             updateGeneratedCode();
             clearRequestItems();
-
-            if (!localStorage.getItem('warehouseData')) {
-                var req1 = {
-                    id: nextRequestId++,
-                    requestNumber: generateRequestNumber(),
-                    type: 'consumable',
-                    items: [{ itemId: 1, quantity: 2 }, { itemId: 8, quantity: 5 }],
-                    requester: 'رضا محمدی',
-                    priority: 'normal',
-                    description: 'برای تعمیرات',
-                    status: 'approved',
-                    date: new Date().toLocaleDateString('fa-IR')
-                };
-                requests.push(req1);
-
-                var req2 = {
-                    id: nextRequestId++,
-                    requestNumber: generateRequestNumber(),
-                    type: 'returnable',
-                    items: [{ itemId: 3, quantity: 1 }],
-                    requester: 'علی کریمی',
-                    priority: 'urgent',
-                    description: 'ابزار مورد نیاز',
-                    status: 'approved',
-                    date: new Date().toLocaleDateString('fa-IR')
-                };
-                requests.push(req2);
-
-                var req3 = {
-                    id: nextRequestId++,
-                    requestNumber: generateRequestNumber(),
-                    type: 'purchase',
-                    items: [{ itemId: 7, quantity: 10 }],
-                    requester: 'سارا حسینی',
-                    priority: 'critical',
-                    description: 'ذخیره اضطراری',
-                    status: 'production',
-                    date: new Date().toLocaleDateString('fa-IR')
-                };
-                requests.push(req3);
-
-                var req4 = {
-                    id: nextRequestId++,
-                    requestNumber: generateRequestNumber(),
-                    type: 'consumable',
-                    items: [{ itemId: 4, quantity: 3 }, { itemId: 6, quantity: 2 }],
-                    requester: 'مهدی احمدی',
-                    priority: 'normal',
-                    description: 'مصرف اداری',
-                    status: 'approved',
-                    date: new Date().toLocaleDateString('fa-IR')
-                };
-                requests.push(req4);
-
-                saveData();
-            } else {
-                loadData();
-            }
-
+            
+            loadAllData();
             renderEntryHistory();
 
-            console.log('✅ سیستم مدیریت انبار با موفقیت بارگذاری شد!');
+            console.log('✅ سیستم مدیریت انبار با Firebase راه‌اندازی شد!');
             console.log('📌 نام کاربری: admin');
             console.log('📌 رمز عبور: 123456');
             console.log('📌 نقش‌ها: warehouse, production, factory');
@@ -3917,6 +4008,7 @@
             console.log('📋 تعداد درخواست‌ها:', requests.length);
             console.log('📤 تعداد خروجی‌ها:', exitHistory.length);
             console.log('📥 تعداد ورودی‌ها:', entryHistory.length);
+            console.log('🔥 داده‌ها در Firebase ذخیره می‌شوند و بین همه کاربران به اشتراک گذاشته می‌شوند!');
         })();
     </script>
 </body>
