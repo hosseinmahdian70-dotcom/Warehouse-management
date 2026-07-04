@@ -1,0 +1,3923 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>سیستم مدیریت انبار</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* ============================================================ */
+        /* استایل‌ها (همانند قبل) */
+        /* ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        body.dark-mode {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e, #16213e);
+        }
+        body.dark-mode .login-container {
+            background: rgba(30, 30, 50, 0.95);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        body.dark-mode .login-container h1 {
+            color: #e0e0e0;
+        }
+        body.dark-mode .login-container .subtitle {
+            color: #a0a0b0;
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+        body.dark-mode .input-group input {
+            background: #2a2a3e;
+            border-color: #3a3a5e;
+            color: #e0e0e0;
+        }
+        body.dark-mode .input-group input:focus {
+            border-color: #2c7be0;
+            background: #2a2a3e;
+        }
+        body.dark-mode .input-group i {
+            color: #8a9bb5;
+        }
+        body.dark-mode .remember-row label {
+            color: #c0c0d0;
+        }
+        body.dark-mode .top-navbar {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+            border-bottom-color: rgba(255, 255, 255, 0.05);
+        }
+        body.dark-mode .dashboard-wrapper {
+            background: rgba(20, 20, 40, 0.97);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        body.dark-mode .stat-card {
+            background: #1a1a3e;
+            border-color: #2a2a5e;
+        }
+        body.dark-mode .stat-card .number {
+            color: #e0e0e0;
+        }
+        body.dark-mode .stat-card .label {
+            color: #8a8aaa;
+        }
+        body.dark-mode .stat-card:hover {
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+        body.dark-mode .stat-card .item-list {
+            color: #ff6b6b;
+        }
+        body.dark-mode .stat-card .item-list .item-name {
+            border-bottom-color: #2a2a5e;
+        }
+        body.dark-mode .table-wrap {
+            background: #1a1a3e;
+            border-color: #2a2a5e;
+        }
+        body.dark-mode th {
+            background: #1a1a3e;
+            color: #e0e0e0;
+            border-bottom-color: #2a2a5e;
+        }
+        body.dark-mode td {
+            color: #d0d0e0;
+            border-bottom-color: #2a2a5e;
+        }
+        body.dark-mode tr:hover td {
+            background: #1a1a4e;
+        }
+        body.dark-mode .badge {
+            background: #1a2a5e;
+            color: #6a9ae0;
+        }
+        body.dark-mode .badge.warning {
+            background: #3a2a0e;
+            color: #f0a050;
+        }
+        body.dark-mode .badge.danger {
+            background: #3a1a1a;
+            color: #e06060;
+        }
+        body.dark-mode .badge.success {
+            background: #1a3a1a;
+            color: #70d080;
+        }
+        body.dark-mode .badge.info {
+            background: #1a3a3a;
+            color: #70d0d0;
+        }
+        body.dark-mode .badge.purple {
+            background: #2a1a3a;
+            color: #b070d0;
+        }
+        body.dark-mode .action-btn.edit:hover {
+            background: #1a2a5e;
+        }
+        body.dark-mode .action-btn.delete:hover {
+            background: #3a1a1a;
+        }
+        body.dark-mode .action-btn.delete-request:hover {
+            background: #3a1a1a;
+        }
+        body.dark-mode .action-btn.approve:hover {
+            background: #1a3a1a;
+        }
+        body.dark-mode .action-btn.reject:hover {
+            background: #3a1a1a;
+        }
+        body.dark-mode .action-btn.undo:hover {
+            background: #3a2a1a;
+        }
+        body.dark-mode .action-btn.pdf:hover {
+            background: #1a2a3a;
+        }
+        body.dark-mode .form-card {
+            background: #1a1a3e;
+            border-color: #2a2a5e;
+        }
+        body.dark-mode .form-card label {
+            color: #d0d0e0;
+        }
+        body.dark-mode .form-card input,
+        body.dark-mode .form-card select,
+        body.dark-mode .form-card textarea {
+            background: #0a0a2e;
+            border-color: #2a2a5e;
+            color: #e0e0e0;
+        }
+        body.dark-mode .form-card input:focus,
+        body.dark-mode .form-card select:focus,
+        body.dark-mode .form-card textarea:focus {
+            box-shadow: 0 0 0 4px rgba(44, 123, 224, 0.2);
+        }
+        body.dark-mode .form-card .code-display {
+            background: #2a2a5e;
+            color: #6a9ae0;
+        }
+        body.dark-mode .message.success {
+            background: #1a3a1a;
+            color: #70d080;
+            border-color: #2a5a2a;
+        }
+        body.dark-mode .message.error {
+            background: #3a1a1a;
+            color: #d07070;
+            border-color: #5a2a2a;
+        }
+        body.dark-mode .settings-box {
+            background: #1a1a3e;
+            border-color: #2a2a5e;
+        }
+        body.dark-mode .settings-box .setting-item {
+            border-bottom-color: #2a2a5e;
+        }
+        body.dark-mode .settings-box .setting-item label {
+            color: #d0d0e0;
+        }
+        body.dark-mode .settings-box .setting-item input[type="text"],
+        body.dark-mode .settings-box .setting-item input[type="password"] {
+            background: #0a0a2e;
+            border-color: #2a2a5e;
+            color: #e0e0e0;
+        }
+        body.dark-mode .settings-box .setting-item select {
+            background: #0a0a2e;
+            border-color: #2a2a5e;
+            color: #e0e0e0;
+        }
+        body.dark-mode .modal-box {
+            background: #1a1a3e;
+            border: 1px solid #2a2a5e;
+        }
+        body.dark-mode .modal-box h3 {
+            color: #e0e0e0;
+        }
+        body.dark-mode .modal-box .form-group label {
+            color: #d0d0e0;
+        }
+        body.dark-mode .modal-box .form-group input,
+        body.dark-mode .modal-box .form-group select {
+            background: #0a0a2e;
+            border-color: #2a2a5e;
+            color: #e0e0e0;
+        }
+        body.dark-mode .modal-box .modal-buttons .btn-cancel {
+            background: #2a2a5e;
+            color: #d0d0e0;
+        }
+        body.dark-mode .modal-box .modal-buttons .btn-cancel:hover {
+            background: #3a3a6e;
+        }
+        body.dark-mode .main-content .page-title {
+            color: #e0e0e0;
+        }
+        body.dark-mode .toggle-password:hover {
+            color: #e0e0e0;
+            background: #2a2a3e;
+        }
+        body.dark-mode .login-container .subtitle {
+            color: #a0a0b0;
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+        body.dark-mode .remember-row label {
+            color: #c0c0d0;
+        }
+        body.dark-mode .request-status.pending {
+            background: #3a3a0a;
+            color: #d0d070;
+        }
+        body.dark-mode .request-status.production {
+            background: #0a2a3a;
+            color: #70b0d0;
+        }
+        body.dark-mode .request-status.factory {
+            background: #0a3a1a;
+            color: #70d090;
+        }
+        body.dark-mode .request-status.approved {
+            background: #0a3a2a;
+            color: #70d0a0;
+        }
+        body.dark-mode .request-status.rejected {
+            background: #3a0a0a;
+            color: #d07070;
+        }
+        body.dark-mode .request-status.delivered {
+            background: #0a3a2a;
+            color: #70d0a0;
+        }
+        body.dark-mode .modal-overlay .modal-box .request-item-detail {
+            border-bottom-color: #2a2a5e;
+        }
+        body.dark-mode .modal-overlay .modal-box .request-item-detail .item-code {
+            color: #6a9ae0;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 32px;
+            padding: 40px 35px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .login-container h1 {
+            text-align: center;
+            font-weight: 700;
+            font-size: 28px;
+            color: #1e2a3a;
+            margin-bottom: 8px;
+        }
+        .login-container .subtitle {
+            text-align: center;
+            color: #5e6f8d;
+            font-size: 14px;
+            margin-bottom: 28px;
+            border-bottom: 2px solid #eef2f7;
+            padding-bottom: 16px;
+        }
+        .login-container .subtitle i {
+            margin-left: 6px;
+            color: #2c7be0;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 22px;
+        }
+        .input-group i {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8a9bb5;
+            font-size: 18px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 48px 14px 48px;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 15px;
+            background: #f8fafc;
+            transition: 0.25s;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: #2c7be0;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(44, 123, 224, 0.15);
+        }
+        .toggle-password {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #8a9bb5;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 6px;
+            transition: 0.2s;
+            border-radius: 50%;
+        }
+        .toggle-password:hover {
+            color: #1e2a3a;
+            background: #eef2f7;
+        }
+        .remember-row {
+            display: flex;
+            align-items: center;
+            margin: 20px 0 28px;
+            font-size: 14px;
+        }
+        .remember-row label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2d3a4f;
+            cursor: pointer;
+        }
+        .remember-row label input[type="checkbox"] {
+            width: 17px;
+            height: 17px;
+            accent-color: #2c7be0;
+            cursor: pointer;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #2c7be0, #1a5bbf);
+            border: none;
+            border-radius: 50px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.25s;
+            box-shadow: 0 8px 20px rgba(44, 123, 224, 0.35);
+        }
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(44, 123, 224, 0.5);
+            background: linear-gradient(135deg, #1a5bbf, #0f4a9e);
+        }
+        .btn-login i {
+            margin-left: 10px;
+        }
+
+        .dashboard-wrapper {
+            display: none;
+            width: 100%;
+            max-width: 1400px;
+            min-height: 90vh;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 32px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            overflow: hidden;
+            flex-direction: column;
+        }
+        .dashboard-wrapper.active {
+            display: flex;
+            animation: fadeUp 0.45s ease;
+        }
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .top-navbar {
+            background: linear-gradient(135deg, #0f2027, #1a2f3a);
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.06);
+        }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .navbar-brand i {
+            color: #2c7be0;
+        }
+        .navbar-brand small {
+            font-size: 12px;
+            font-weight: 400;
+            color: #8a9bb5;
+        }
+        .navbar-menu {
+            display: flex;
+            list-style: none;
+            gap: 4px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .navbar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            color: #b0c4d9;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.25s;
+            cursor: pointer;
+        }
+        .navbar-menu li a i {
+            font-size: 16px;
+            color: #6a7f9a;
+            transition: 0.2s;
+        }
+        .navbar-menu li a:hover {
+            background: rgba(44, 123, 224, 0.15);
+            color: #fff;
+        }
+        .navbar-menu li a:hover i {
+            color: #2c7be0;
+        }
+        .navbar-menu li a.active {
+            background: rgba(44, 123, 224, 0.2);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(44, 123, 224, 0.15);
+        }
+        .navbar-menu li a.active i {
+            color: #2c7be0;
+        }
+        .navbar-menu .logout-item a {
+            color: #e74c3c;
+        }
+        .navbar-menu .logout-item a i {
+            color: #e74c3c;
+        }
+        .navbar-menu .logout-item a:hover {
+            background: rgba(231, 76, 60, 0.15);
+            color: #ff6b5b;
+        }
+        .navbar-user {
+            color: #b0c4d9;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .navbar-user i {
+            color: #2c7be0;
+        }
+        .navbar-user .role-selector {
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 13px;
+            cursor: pointer;
+            outline: none;
+        }
+        .navbar-user .role-selector option {
+            background: #1a2f3a;
+            color: #fff;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px 35px;
+            overflow-y: auto;
+            max-height: 82vh;
+        }
+        .main-content .page-title {
+            font-size: 24px;
+            color: #0f2027;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .main-content .page-title i {
+            color: #2c7be0;
+        }
+        .page-content {
+            display: none;
+        }
+        .page-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: #f8fafc;
+            border-radius: 18px;
+            padding: 18px 14px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
+        }
+        .stat-card i {
+            font-size: 28px;
+            color: #2c7be0;
+            margin-bottom: 6px;
+        }
+        .stat-card .number {
+            font-size: 26px;
+            font-weight: 800;
+            color: #0f2027;
+        }
+        .stat-card .label {
+            color: #5e6f8d;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        .stat-card .item-list {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #e74c3c;
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: right;
+        }
+        .stat-card .item-list .item-name {
+            display: block;
+            padding: 3px 0;
+            border-bottom: 1px solid #eef2f7;
+            font-weight: 500;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 22px;
+            align-items: center;
+        }
+        .toolbar input[type="text"],
+        .toolbar input[type="search"] {
+            flex: 1;
+            min-width: 200px;
+            padding: 11px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 40px;
+            background: #f8fafc;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .toolbar input[type="text"]:focus,
+        .toolbar input[type="search"]:focus {
+            border-color: #2c7be0;
+            background: #fff;
+        }
+        .toolbar select {
+            padding: 11px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 40px;
+            background: #f8fafc;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .toolbar select:focus {
+            border-color: #2c7be0;
+            background: #fff;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 18px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th {
+            background: #f1f5f9;
+            color: #1e2a3a;
+            padding: 14px 12px;
+            text-align: center;
+            font-weight: 700;
+            border-bottom: 2px solid #dce3ec;
+        }
+        td {
+            padding: 12px 12px;
+            text-align: center;
+            border-bottom: 1px solid #eef2f7;
+            color: #1e2a3a;
+        }
+        tr:hover td {
+            background: #fafcff;
+        }
+        .badge {
+            background: #dbeafe;
+            color: #1a5bbf;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 12px;
+            display: inline-block;
+        }
+        .badge.warning {
+            background: #fef3c7;
+            color: #b45309;
+        }
+        .badge.danger {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        .badge.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .badge.purple {
+            background: #e8d5f5;
+            color: #6c3483;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            margin: 0 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.15s;
+            padding: 6px 10px;
+            border-radius: 30px;
+        }
+        .action-btn.edit {
+            color: #2c7be0;
+        }
+        .action-btn.edit:hover {
+            background: #dbeafe;
+        }
+        .action-btn.delete {
+            color: #e74c3c;
+        }
+        .action-btn.delete:hover {
+            background: #fee2e2;
+        }
+        .action-btn.delete-request {
+            color: #e74c3c;
+        }
+        .action-btn.delete-request:hover {
+            background: #fee2e2;
+        }
+        .action-btn.approve {
+            color: #27ae60;
+        }
+        .action-btn.approve:hover {
+            background: #d4edda;
+        }
+        .action-btn.reject {
+            color: #e74c3c;
+        }
+        .action-btn.reject:hover {
+            background: #fee2e2;
+        }
+        .action-btn.undo {
+            color: #e67e22;
+        }
+        .action-btn.undo:hover {
+            background: #fef3c7;
+        }
+        .action-btn.view {
+            color: #2c7be0;
+        }
+        .action-btn.view:hover {
+            background: #dbeafe;
+        }
+        .action-btn.pdf {
+            color: #e74c3c;
+        }
+        .action-btn.pdf:hover {
+            background: #fee2e2;
+        }
+
+        .form-card {
+            background: #f8fafc;
+            border-radius: 18px;
+            padding: 25px 30px;
+            border: 1px solid #e2e8f0;
+            max-width: 650px;
+        }
+        .form-card .form-group {
+            margin-bottom: 18px;
+        }
+        .form-card label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #1e2a3a;
+        }
+        .form-card input,
+        .form-card select,
+        .form-card textarea {
+            width: 100%;
+            padding: 11px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            background: #fff;
+            outline: none;
+            transition: 0.2s;
+        }
+        .form-card input:focus,
+        .form-card select:focus,
+        .form-card textarea:focus {
+            border-color: #2c7be0;
+            box-shadow: 0 0 0 4px rgba(44, 123, 224, 0.1);
+        }
+        .form-card textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        .form-card .btn-submit {
+            background: #2c7be0;
+            border: none;
+            color: #fff;
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .form-card .btn-submit:hover {
+            background: #1a5bbf;
+            transform: scale(1.02);
+        }
+        .form-card .btn-add-item {
+            background: #27ae60;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+        .form-card .btn-add-item:hover {
+            background: #1e8449;
+            transform: scale(1.02);
+        }
+        .form-card .btn-remove-item {
+            background: #e74c3c;
+            border: none;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 12px;
+        }
+        .form-card .btn-remove-item:hover {
+            background: #c0392b;
+        }
+        .form-card .code-display {
+            background: #eef2f7;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #2c7be0;
+            direction: ltr;
+            text-align: center;
+            font-size: 16px;
+        }
+        .form-card .request-items-container {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px dashed #dce3ec;
+        }
+        body.dark-mode .form-card .request-items-container {
+            background: #1a1a3e;
+            border-color: #2a2a5e;
+        }
+        .form-card .request-item-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+        body.dark-mode .form-card .request-item-row {
+            background: #0a0a2e;
+            border-color: #2a2a5e;
+        }
+        .form-card .request-item-row input[type="number"] {
+            width: 80px;
+            padding: 6px 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #fff;
+            outline: none;
+        }
+        body.dark-mode .form-card .request-item-row input[type="number"] {
+            background: #0a0a2e;
+            border-color: #2a2a5e;
+            color: #e0e0e0;
+        }
+        .message {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: none;
+        }
+        .message.success {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message.error {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .settings-box {
+            background: #f8fafc;
+            border-radius: 18px;
+            padding: 25px 30px;
+            border: 1px solid #e2e8f0;
+            max-width: 700px;
+        }
+        .settings-box .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid #eef2f7;
+        }
+        .settings-box .setting-item:last-child {
+            border-bottom: none;
+        }
+        .settings-box .setting-item label {
+            font-weight: 500;
+            color: #1e2a3a;
+            min-width: 120px;
+        }
+        .settings-box .setting-item input[type="text"],
+        .settings-box .setting-item input[type="password"] {
+            padding: 8px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+            width: 200px;
+        }
+        .settings-box .setting-item input[type="text"]:focus,
+        .settings-box .setting-item input[type="password"]:focus {
+            border-color: #2c7be0;
+        }
+        .settings-box .setting-item .btn-change {
+            background: #2c7be0;
+            border: none;
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .settings-box .setting-item .btn-change:hover {
+            background: #1a5bbf;
+        }
+        .settings-box .setting-item .input-group-inline {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .settings-box .setting-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #2c7be0;
+            cursor: pointer;
+        }
+        .settings-box .setting-item select {
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            background: #fff;
+            outline: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: #fff;
+            border-radius: 24px;
+            padding: 35px 40px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            animation: modalIn 0.3s ease;
+        }
+        body.dark-mode .modal-box {
+            background: #1a1a3e;
+            border: 1px solid #2a2a5e;
+        }
+        @keyframes modalIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        .modal-box h3 {
+            font-size: 22px;
+            color: #0f2027;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        body.dark-mode .modal-box h3 {
+            color: #e0e0e0;
+        }
+        .modal-box .form-group {
+            margin-bottom: 16px;
+        }
+        .modal-box .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #1e2a3a;
+        }
+        body.dark-mode .modal-box .form-group label {
+            color: #d0d0e0;
+        }
+        .modal-box .form-group input,
+        .modal-box .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            background: #f8fafc;
+            outline: none;
+            transition: 0.2s;
+        }
+        body.dark-mode .modal-box .form-group input,
+        body.dark-mode .modal-box .form-group select {
+            background: #0a0a2e;
+            border-color: #2a2a5e;
+            color: #e0e0e0;
+        }
+        .modal-box .form-group input:focus,
+        .modal-box .form-group select:focus {
+            border-color: #2c7be0;
+            box-shadow: 0 0 0 4px rgba(44, 123, 224, 0.1);
+        }
+        .modal-box .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        .modal-box .modal-buttons button {
+            padding: 10px 30px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .modal-box .modal-buttons .btn-save {
+            background: #2c7be0;
+            color: #fff;
+        }
+        .modal-box .modal-buttons .btn-save:hover {
+            background: #1a5bbf;
+            transform: scale(1.02);
+        }
+        .modal-box .modal-buttons .btn-cancel {
+            background: #e2e8f0;
+            color: #1e2a3a;
+        }
+        .modal-box .modal-buttons .btn-cancel:hover {
+            background: #cbd5e0;
+        }
+        body.dark-mode .modal-box .modal-buttons .btn-cancel {
+            background: #2a2a5e;
+            color: #d0d0e0;
+        }
+        body.dark-mode .modal-box .modal-buttons .btn-cancel:hover {
+            background: #3a3a6e;
+        }
+        .modal-box .request-item-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #eef2f7;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .modal-box .request-item-detail:last-child {
+            border-bottom: none;
+        }
+        .modal-box .request-item-detail .item-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .modal-box .request-item-detail .item-code {
+            color: #2c7be0;
+            direction: ltr;
+            font-size: 13px;
+        }
+        .modal-box .request-item-detail .item-quantity {
+            background: #eef2f7;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        body.dark-mode .modal-box .request-item-detail .item-quantity {
+            background: #2a2a5e;
+            color: #d0d0e0;
+        }
+        .modal-box .request-info {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        body.dark-mode .modal-box .request-info {
+            background: #1a1a3e;
+        }
+        .modal-box .request-info .info-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+        .modal-box .request-info .info-row .label {
+            font-weight: 600;
+            color: #5e6f8d;
+            min-width: 100px;
+        }
+        body.dark-mode .modal-box .request-info .info-row .label {
+            color: #8a8aaa;
+        }
+        .modal-box .request-info .info-row .value {
+            color: #1e2a3a;
+            font-weight: 500;
+        }
+        body.dark-mode .modal-box .request-info .info-row .value {
+            color: #d0d0e0;
+        }
+        .request-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .request-status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .request-status.production {
+            background: #cce5ff;
+            color: #004085;
+        }
+        .request-status.factory {
+            background: #d4edda;
+            color: #155724;
+        }
+        .request-status.approved {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .request-status.rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .request-status.delivered {
+            background: #c3e6cb;
+            color: #155724;
+        }
+        .clickable-id {
+            color: #2c7be0;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .clickable-id:hover {
+            color: #1a5bbf;
+        }
+        body.dark-mode .clickable-id {
+            color: #6a9ae0;
+        }
+        body.dark-mode .clickable-id:hover {
+            color: #8abaf0;
+        }
+        .form-card .item-search-input {
+            position: relative;
+        }
+        .form-card .item-search-input input {
+            width: 100%;
+            padding: 8px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+            outline: none;
+            transition: 0.2s;
+        }
+        .form-card .item-search-input input:focus {
+            border-color: #2c7be0;
+            box-shadow: 0 0 0 4px rgba(44, 123, 224, 0.1);
+        }
+        .form-card .item-search-input datalist {
+            display: none;
+        }
+
+        #pdfContent {
+            display: none;
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                padding: 20px;
+            }
+            .top-navbar {
+                padding: 10px 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-navbar {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 12px 16px;
+            }
+            .navbar-menu {
+                justify-content: center;
+                gap: 2px;
+            }
+            .navbar-menu li a {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            .navbar-menu li a span {
+                display: none;
+            }
+            .navbar-user {
+                justify-content: center;
+                font-size: 13px;
+                flex-wrap: wrap;
+            }
+            .main-content {
+                padding: 16px;
+                max-height: unset;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .settings-box .setting-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            .settings-box .setting-item .input-group-inline {
+                flex-wrap: wrap;
+            }
+            .settings-box .setting-item input[type="text"],
+            .settings-box .setting-item input[type="password"] {
+                width: 100%;
+            }
+            .modal-box {
+                padding: 25px 20px;
+            }
+            .form-card {
+                padding: 18px;
+            }
+            .form-card .request-item-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .form-card .request-item-row input[type="number"] {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .toolbar {
+                flex-direction: column;
+            }
+            .toolbar input[type="text"],
+            .toolbar input[type="search"] {
+                width: 100%;
+            }
+            .form-card {
+                padding: 18px;
+            }
+            .modal-box {
+                padding: 20px 15px;
+            }
+            .modal-box .request-item-detail {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+        }
+        
+        /* استایل جدید برای دکمه‌های PDF در تاریخچه */
+        .btn-pdf-history {
+            background: #e74c3c;
+            border: none;
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-pdf-history:hover {
+            background: #c0392b;
+            transform: scale(1.03);
+        }
+        body.dark-mode .btn-pdf-history {
+            background: #c0392b;
+        }
+        body.dark-mode .btn-pdf-history:hover {
+            background: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== LOGIN ===== -->
+    <div class="login-container" id="loginPage">
+        <h1>🏚️ انبار</h1>
+        <div class="subtitle"><i class="fas fa-warehouse"></i> مدیریت هوشمند</div>
+        <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" id="username" placeholder="نام کاربری" value="admin" />
+        </div>
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" placeholder="رمز عبور" value="123456" />
+            <button class="toggle-password" id="togglePassBtn" type="button">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+        <div class="remember-row">
+            <label>
+                <input type="checkbox" id="rememberMe" checked />
+                <i class="fas fa-check-circle" style="color:#2c7be0;"></i> مرا به خاطر بسپار
+            </label>
+        </div>
+        <button class="btn-login" id="loginBtn">
+            <i class="fas fa-sign-in-alt"></i> ورود به انبار
+        </button>
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="dashboard-wrapper" id="dashboardWrapper">
+        <nav class="top-navbar">
+            <div class="navbar-brand">
+                <i class="fas fa-boxes"></i>
+                <span>انبار <small>سیستم مدیریت</small></span>
+            </div>
+            <ul class="navbar-menu" id="navbarMenu">
+                <li><a class="active" data-page="dashboard"><i class="fas fa-chart-pie"></i> <span>داشبورد</span></a></li>
+                <li><a data-page="add-item"><i class="fas fa-plus-circle"></i> <span>ثبت کالا</span></a></li>
+                <li><a data-page="list-items"><i class="fas fa-list"></i> <span>لیست کالا</span></a></li>
+                <li><a data-page="requests"><i class="fas fa-clipboard-list"></i> <span>درخواست‌ها</span></a></li>
+                <li><a data-page="exit-item"><i class="fas fa-sign-out-alt"></i> <span>خروج کالا</span></a></li>
+                <li><a data-page="entry-item"><i class="fas fa-sign-in-alt"></i> <span>ورود کالا</span></a></li>
+                <li><a data-page="settings"><i class="fas fa-cog"></i> <span>تنظیمات</span></a></li>
+                <li class="logout-item"><a id="navbarLogout"><i class="fas fa-power-off"></i> <span>خروج</span></a></li>
+            </ul>
+            <div class="navbar-user">
+                <i class="fas fa-user-circle"></i>
+                <span id="displayUser">admin</span>
+                <select class="role-selector" id="roleSelector">
+                    <option value="warehouse">انباردار</option>
+                    <option value="production">مدیر تولید</option>
+                    <option value="factory">مدیر کارخانه</option>
+                </select>
+            </div>
+        </nav>
+        <main class="main-content">
+            <!-- ===== داشبورد ===== -->
+            <div class="page-content active" id="page-dashboard">
+                <div class="page-title"><i class="fas fa-chart-pie"></i> داشبورد</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-cubes"></i>
+                        <div class="number" id="totalItems">0</div>
+                        <div class="label">کل کالاها</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-check-circle" style="color:#27ae60;"></i>
+                        <div class="number" id="inStockItems">0</div>
+                        <div class="label">موجود</div>
+                    </div>
+                    <div class="stat-card" id="lowStockCard" style="cursor:pointer;">
+                        <i class="fas fa-exclamation-triangle" style="color:#e67e22;"></i>
+                        <div class="number" id="lowStockItems">0</div>
+                        <div class="label">کمتر از حد مجاز</div>
+                        <div class="item-list" id="lowStockList"></div>
+                    </div>
+                    <div class="stat-card" id="outOfStockCard" style="cursor:pointer;">
+                        <i class="fas fa-times-circle" style="color:#e74c3c;"></i>
+                        <div class="number" id="outOfStockItems">0</div>
+                        <div class="label">تمام شده</div>
+                        <div class="item-list" id="outOfStockList"></div>
+                    </div>
+                </div>
+                <div class="stats-grid" style="margin-top:10px;">
+                    <div class="stat-card" style="cursor:default;">
+                        <i class="fas fa-clipboard-list" style="color:#e67e22;"></i>
+                        <div class="number" id="pendingRequests">0</div>
+                        <div class="label">درخواست‌های در انتظار</div>
+                    </div>
+                    <div class="stat-card" style="cursor:default;">
+                        <i class="fas fa-check-double" style="color:#27ae60;"></i>
+                        <div class="number" id="approvedRequests">0</div>
+                        <div class="label">درخواست‌های تایید شده</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== ثبت کالا ===== -->
+            <div class="page-content" id="page-add-item">
+                <div class="page-title"><i class="fas fa-plus-circle"></i> ثبت کالا</div>
+                <div class="form-card">
+                    <div class="form-group">
+                        <label>نام کالا</label>
+                        <input type="text" id="newName" placeholder="نام کالا را وارد کنید" />
+                    </div>
+                    <div class="form-group">
+                        <label>دسته‌بندی</label>
+                        <select id="newCategory">
+                            <option value="">انتخاب دسته‌بندی...</option>
+                            <option value="مکانیک">مکانیک</option>
+                            <option value="برق">برق</option>
+                            <option value="الکترونیک">الکترونیک</option>
+                            <option value="ساختمانی">ساختمانی</option>
+                            <option value="شیمیایی">شیمیایی</option>
+                            <option value="پلاستیک">پلاستیک</option>
+                            <option value="چوبی">چوبی</option>
+                            <option value="نساجی">نساجی</option>
+                            <option value="غذایی">غذایی</option>
+                            <option value="سایر">سایر</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>کد کالا (تولید خودکار)</label>
+                        <div class="code-display" id="generatedCode">---</div>
+                        <small style="color:#8a9bb5;">کد به صورت خودکار با توجه به دسته‌بندی تولید می‌شود</small>
+                    </div>
+                    <div class="form-group">
+                        <label>تعداد</label>
+                        <input type="number" id="newQuantity" placeholder="تعداد" value="0" />
+                    </div>
+                    <div class="form-group">
+                        <label>حد مجاز (حداقل موجودی)</label>
+                        <input type="number" id="newThreshold" placeholder="حد مجاز" value="5" />
+                    </div>
+                    <button class="btn-submit" id="submitAddItem"><i class="fas fa-save"></i> ثبت کالا</button>
+                    <div id="addItemMessage" class="message"></div>
+                </div>
+            </div>
+
+            <!-- ===== لیست کالا ===== -->
+            <div class="page-content" id="page-list-items">
+                <div class="page-title"><i class="fas fa-list"></i> لیست کالاها</div>
+                <div class="toolbar">
+                    <input type="text" id="searchInput" placeholder="🔍 جستجو..." />
+                    <select id="filterStatus">
+                        <option value="all">همه</option>
+                        <option value="inStock">موجود</option>
+                        <option value="lowStock">کمتر از حد مجاز</option>
+                        <option value="outOfStock">تمام شده</option>
+                    </select>
+                    <button class="btn-add-item" id="exportPdfBtn" style="background:#e74c3c;"><i class="fas fa-file-pdf"></i> خروجی PDF</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>#</th><th>نام</th><th>کد</th><th>دسته</th><th>تعداد</th><th>وضعیت</th><th>عملیات</th></tr>
+                        </thead>
+                        <tbody id="inventoryTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ===== درخواست‌ها ===== -->
+            <div class="page-content" id="page-requests">
+                <div class="page-title"><i class="fas fa-clipboard-list"></i> درخواست‌ها</div>
+                <div class="form-card" style="margin-bottom:30px; max-width:850px;">
+                    <h3 style="margin-bottom:15px; color:#0f2027;"><i class="fas fa-plus-circle"></i> ثبت درخواست جدید</h3>
+                    <div class="form-group">
+                        <label>نوع درخواست</label>
+                        <select id="requestType">
+                            <option value="consumable">مصرفی</option>
+                            <option value="returnable">برگشت‌پذیر</option>
+                            <option value="purchase">خرید</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>درخواست‌کننده</label>
+                        <input type="text" id="requestRequester" placeholder="نام شخص درخواست‌کننده" />
+                    </div>
+                    <div class="form-group">
+                        <label>اولویت</label>
+                        <select id="requestPriority">
+                            <option value="normal">عادی</option>
+                            <option value="urgent">فوری</option>
+                            <option value="critical">خیلی فوری</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>توضیحات (اختیاری)</label>
+                        <textarea id="requestDescription" placeholder="توضیحات بیشتر..."></textarea>
+                    </div>
+                    <label style="font-weight:600; margin-bottom:10px; display:block;">اقلام درخواستی</label>
+                    <div class="request-items-container" id="requestItemsContainer"></div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
+                        <button class="btn-add-item" id="addItemRowBtn"><i class="fas fa-plus"></i> اضافه کردن قلم جدید</button>
+                    </div>
+                    <button class="btn-submit" id="submitRequest"><i class="fas fa-save"></i> ثبت درخواست</button>
+                    <div id="requestMessage" class="message"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:15px;">
+                    <h3 style="color:#0f2027;"><i class="fas fa-list"></i> لیست درخواست‌ها</h3>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <select id="requestFilterStatus" style="padding:8px 14px; border-radius:10px; border:2px solid #e2e8f0; background:#fff; outline:none; font-size:14px;">
+                            <option value="all">همه</option>
+                            <option value="pending">ثبت شده</option>
+                            <option value="production">تایید مدیر تولید</option>
+                            <option value="factory">تایید مدیر کارخانه</option>
+                            <option value="approved">تایید نهایی</option>
+                            <option value="rejected">رد شده</option>
+                            <option value="delivered">تحویل داده شده</option>
+                        </select>
+                        <input type="search" id="requestSearch" placeholder="🔍 جستجو..." style="padding:8px 16px; border:2px solid #e2e8f0; border-radius:40px; outline:none; font-size:14px; background:#f8fafc; min-width:150px;" />
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>نوع</th>
+                                <th>تعداد اقلام</th>
+                                <th>درخواست‌کننده</th>
+                                <th>اولویت</th>
+                                <th>وضعیت</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ===== خروج کالا ===== -->
+            <div class="page-content" id="page-exit-item">
+                <div class="page-title"><i class="fas fa-sign-out-alt"></i> خروج کالا</div>
+                <div class="form-card">
+                    <div class="form-group">
+                        <label>انتخاب درخواست تایید شده</label>
+                        <select id="exitRequestSelect"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>تحویل‌گیرنده</label>
+                        <input type="text" id="exitReceiver" placeholder="نام تحویل‌گیرنده" />
+                    </div>
+                    <button class="btn-submit" id="submitExit"><i class="fas fa-hand-holding-heart"></i> تحویل کالا</button>
+                    <div id="exitMessage" class="message"></div>
+                </div>
+                <div style="margin-top:20px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:15px;">
+                        <h3 style="color:#0f2027; margin:0;"><i class="fas fa-history"></i> تاریخچه خروج‌ها</h3>
+                        <button class="btn-pdf-history" id="exportExitHistoryPdf"><i class="fas fa-file-pdf"></i> خروجی PDF تاریخچه خروج</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>#</th><th>درخواست</th><th>کالا</th><th>تعداد</th><th>تحویل‌گیرنده</th><th>تاریخ</th></tr>
+                            </thead>
+                            <tbody id="exitHistoryBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== ورود کالا ===== -->
+            <div class="page-content" id="page-entry-item">
+                <div class="page-title"><i class="fas fa-sign-in-alt"></i> ورود کالا</div>
+                <div class="form-card">
+                    <div class="form-group">
+                        <label>انتخاب کالا</label>
+                        <select id="entrySelect"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>تعداد ورود</label>
+                        <input type="number" id="entryQuantity" placeholder="تعداد" value="1" min="1" />
+                    </div>
+                    <div class="form-group">
+                        <label>تحویل‌دهنده</label>
+                        <input type="text" id="entrySupplier" placeholder="نام تحویل‌دهنده (تامین‌کننده)" />
+                    </div>
+                    <button class="btn-submit" id="submitEntry"><i class="fas fa-arrow-right"></i> ثبت ورود</button>
+                    <div id="entryMessage" class="message"></div>
+                </div>
+                <div style="margin-top:20px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:15px;">
+                        <h3 style="color:#0f2027; margin:0;"><i class="fas fa-history"></i> تاریخچه ورود‌ها</h3>
+                        <button class="btn-pdf-history" id="exportEntryHistoryPdf"><i class="fas fa-file-pdf"></i> خروجی PDF تاریخچه ورود</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>#</th><th>کالا</th><th>تعداد</th><th>تحویل‌دهنده</th><th>تاریخ</th></tr>
+                            </thead>
+                            <tbody id="entryHistoryBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== تنظیمات ===== -->
+            <div class="page-content" id="page-settings">
+                <div class="page-title"><i class="fas fa-cog"></i> تنظیمات</div>
+                <div class="settings-box">
+                    <div class="setting-item">
+                        <label><i class="fas fa-user"></i> نام کاربری</label>
+                        <div class="input-group-inline">
+                            <input type="text" id="settingsUsername" placeholder="نام کاربری جدید" />
+                            <button class="btn-change" id="changeUsernameBtn">تغییر</button>
+                        </div>
+                    </div>
+                    <div class="setting-item" style="flex-direction:column; align-items:stretch; gap:10px;">
+                        <label><i class="fas fa-lock"></i> تغییر رمز عبور</label>
+                        <input type="password" id="settingsCurrentPassword" placeholder="رمز فعلی" style="width:100%;" />
+                        <input type="password" id="settingsNewPassword" placeholder="رمز جدید" style="width:100%;" />
+                        <input type="password" id="settingsConfirmPassword" placeholder="تکرار رمز جدید" style="width:100%;" />
+                        <button class="btn-change" id="changePasswordBtn" style="width:100%;">تغییر رمز</button>
+                    </div>
+                    <div id="settingsMessage" class="message"></div>
+                    <div class="setting-item">
+                        <label><i class="fas fa-moon"></i> حالت شب</label>
+                        <input type="checkbox" id="darkModeToggle" />
+                    </div>
+                    <div class="setting-item">
+                        <label><i class="fas fa-bell"></i> اعلان‌ها</label>
+                        <input type="checkbox" id="notificationToggle" checked />
+                    </div>
+                    <div class="setting-item">
+                        <label><i class="fas fa-database"></i> پشتیبان‌گیری</label>
+                        <button id="backupBtn" style="background:#2c7be0; border:none; color:#fff; padding:8px 24px; border-radius:30px; cursor:pointer; font-weight:600;">
+                            <i class="fas fa-download"></i> دریافت خروجی
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ===== MODAL برای ویرایش کالا ===== -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-box">
+            <h3><i class="fas fa-edit"></i> ویرایش کالا</h3>
+            <div class="form-group">
+                <label>نام کالا</label>
+                <input type="text" id="editName" />
+            </div>
+            <div class="form-group">
+                <label>دسته‌بندی</label>
+                <select id="editCategory">
+                    <option value="مکانیک">مکانیک</option>
+                    <option value="برق">برق</option>
+                    <option value="الکترونیک">الکترونیک</option>
+                    <option value="ساختمانی">ساختمانی</option>
+                    <option value="شیمیایی">شیمیایی</option>
+                    <option value="پلاستیک">پلاستیک</option>
+                    <option value="چوبی">چوبی</option>
+                    <option value="نساجی">نساجی</option>
+                    <option value="غذایی">غذایی</option>
+                    <option value="سایر">سایر</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>تعداد</label>
+                <input type="number" id="editQuantity" />
+            </div>
+            <div class="form-group">
+                <label>حد مجاز</label>
+                <input type="number" id="editThreshold" />
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-save" id="editSaveBtn"><i class="fas fa-save"></i> ذخیره</button>
+                <button class="btn-cancel" id="editCancelBtn"><i class="fas fa-times"></i> انصراف</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL برای مشاهده درخواست ===== -->
+    <div class="modal-overlay" id="viewRequestModal">
+        <div class="modal-box">
+            <h3><i class="fas fa-clipboard-list"></i> <span id="viewRequestTitle">جزئیات درخواست</span></h3>
+            <div class="request-info" id="viewRequestInfo"></div>
+            <div id="viewRequestItems"></div>
+            <div class="modal-buttons">
+                <button class="btn-save" id="viewPdfBtn"><i class="fas fa-file-pdf"></i> خروجی PDF</button>
+                <button class="btn-cancel" id="closeViewModal"><i class="fas fa-times"></i> بستن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PDF CONTENT (مخفی) ===== -->
+    <div id="pdfContent" style="display:none;">
+        <div id="pdfInner" style="direction:rtl; padding:40px; background:#fff; font-family:'Segoe UI',Tahoma,sans-serif; max-width:800px; margin:0 auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #2c7be0; padding-bottom:15px; margin-bottom:20px;">
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <span style="font-size:45px; line-height:1;">🏭</span>
+                    <span style="font-size:20px; font-weight:700; color:#0f2027;">ساخت و تجهیز رستاک</span>
+                </div>
+                <div style="text-align:left; direction:ltr;">
+                    <div style="font-size:12px; color:#5e6f8d; text-align:left;" id="pdfTitle">فرم درخواست کالا</div>
+                    <div style="font-size:14px; font-weight:700; color:#0f2027; text-align:left;" id="pdfSubTitle">
+                        شماره: <span id="pdfRequestCode" style="display:inline-block; direction:ltr; unicode-bidi:isolate; font-weight:700;">---</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px 30px; margin-bottom:20px; padding:15px; background:#f8fafc; border-radius:10px;" id="pdfRequestInfo">
+                <div><span style="font-weight:600;">نوع درخواست:</span> <span id="pdfType">---</span></div>
+                <div><span style="font-weight:600;">درخواست‌کننده:</span> <span id="pdfRequester">---</span></div>
+                <div><span style="font-weight:600;">اولویت:</span> <span id="pdfPriority">---</span></div>
+                <div><span style="font-weight:600;">تاریخ:</span> <span id="pdfDate">---</span></div>
+                <div style="grid-column:1/-1;"><span style="font-weight:600;">توضیحات:</span> <span id="pdfDescription">---</span></div>
+            </div>
+            <table style="width:100%; border-collapse:collapse; margin-bottom:30px; font-size:14px;">
+                <thead>
+                    <tr style="background:#2c7be0; color:#fff;">
+                        <th style="padding:10px; border:1px solid #dce3ec; text-align:center;">ردیف</th>
+                        <th style="padding:10px; border:1px solid #dce3ec; text-align:center;">نام کالا</th>
+                        <th style="padding:10px; border:1px solid #dce3ec; text-align:center;">کد کالا</th>
+                        <th style="padding:10px; border:1px solid #dce3ec; text-align:center;">تعداد</th>
+                    </tr>
+                </thead>
+                <tbody id="pdfItemsBody"></tbody>
+            </table>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:30px; border-top:2px solid #eef2f7; padding-top:25px;">
+                <div style="text-align:center;">
+                    <div style="border-top:2px solid #1e2a3a; padding-top:8px; font-weight:600;">انباردار</div>
+                    <div style="font-size:12px; color:#5e6f8d; margin-top:5px;">امضا و تاریخ</div>
+                </div>
+                <div style="text-align:center;">
+                    <div style="border-top:2px solid #1e2a3a; padding-top:8px; font-weight:600;">مدیر تولید</div>
+                    <div style="font-size:12px; color:#5e6f8d; margin-top:5px;">امضا و تاریخ</div>
+                </div>
+                <div style="text-align:center;">
+                    <div style="border-top:2px solid #1e2a3a; padding-top:8px; font-weight:600;">مدیر کارخانه</div>
+                    <div style="font-size:12px; color:#5e6f8d; margin-top:5px;">امضا و تاریخ</div>
+                </div>
+            </div>
+            <div style="text-align:center; font-size:11px; color:#8a9bb5; margin-top:20px; border-top:1px solid #eef2f7; padding-top:15px;">
+                این فرم به صورت خودکار توسط سیستم مدیریت انبار تولید شده است.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  داده‌ها
+        // ============================================================
+        var inventory = [
+            { id: 1, name: 'لپ‌تاپ ایسوس', code: '03-00001', category: 'الکترونیک', quantity: 5, threshold: 2 },
+            { id: 2, name: 'مانیتور سامسونگ', code: '03-00002', category: 'الکترونیک', quantity: 0, threshold: 3 },
+            { id: 3, name: 'صندلی اداری', code: '07-00001', category: 'چوبی', quantity: 12, threshold: 4 },
+            { id: 4, name: 'کیبورد مکانیکی', code: '03-00003', category: 'الکترونیک', quantity: 3, threshold: 2 },
+            { id: 5, name: 'میز کارگردان', code: '07-00002', category: 'چوبی', quantity: 1, threshold: 2 },
+            { id: 6, name: 'هارد اکسترنال 2TB', code: '03-00004', category: 'الکترونیک', quantity: 7, threshold: 5 },
+            { id: 7, name: 'موتور برق', code: '02-00001', category: 'برق', quantity: 2, threshold: 3 },
+            { id: 8, name: 'کاغذ A4 (بسته)', code: '10-00001', category: 'سایر', quantity: 20, threshold: 10 },
+        ];
+
+        var requests = [];
+        var exitHistory = [];
+        var entryHistory = [];
+        var nextItemId = 9;
+        var nextRequestId = 1;
+        var nextExitId = 1;
+        var nextEntryId = 1;
+
+        var credentials = {
+            username: 'admin',
+            password: '123456'
+        };
+
+        var editingItemId = null;
+        var currentRole = 'warehouse';
+        var currentViewRequestId = null;
+        var filterStatus = 'all';
+
+        // ============================================================
+        //  توابع ذخیره‌سازی در LocalStorage
+        // ============================================================
+        function saveData() {
+            try {
+                var data = {
+                    inventory: inventory,
+                    requests: requests,
+                    exitHistory: exitHistory,
+                    entryHistory: entryHistory,
+                    nextItemId: nextItemId,
+                    nextRequestId: nextRequestId,
+                    nextExitId: nextExitId,
+                    nextEntryId: nextEntryId
+                };
+                localStorage.setItem('warehouseData', JSON.stringify(data));
+            } catch (e) {
+                console.warn('خطا در ذخیره‌سازی داده‌ها:', e);
+            }
+        }
+
+        function loadData() {
+            try {
+                var saved = localStorage.getItem('warehouseData');
+                if (saved) {
+                    var data = JSON.parse(saved);
+                    inventory = data.inventory || inventory;
+                    requests = data.requests || [];
+                    exitHistory = data.exitHistory || [];
+                    entryHistory = data.entryHistory || [];
+                    nextItemId = data.nextItemId || 9;
+                    nextRequestId = data.nextRequestId || 1;
+                    nextExitId = data.nextExitId || 1;
+                    nextEntryId = data.nextEntryId || 1;
+                    return true;
+                }
+            } catch (e) {
+                console.warn('خطا در بارگذاری داده‌ها:', e);
+            }
+            return false;
+        }
+
+        // ============================================================
+        //  توابع کمکی
+        // ============================================================
+        function getCategoryNumber(categoryName) {
+            var map = {
+                'مکانیک': '01',
+                'برق': '02',
+                'الکترونیک': '03',
+                'ساختمانی': '04',
+                'شیمیایی': '05',
+                'پلاستیک': '06',
+                'چوبی': '07',
+                'نساجی': '08',
+                'غذایی': '09',
+                'سایر': '10'
+            };
+            return map[categoryName] || '10';
+        }
+
+        function generateCode(category) {
+            if (!category) return '---';
+            var prefix = getCategoryNumber(category);
+            var categoryItems = inventory.filter(function(item) { return item.category === category; });
+            var maxNum = 0;
+            categoryItems.forEach(function(item) {
+                var parts = item.code.split('-');
+                if (parts.length === 2) {
+                    var num = parseInt(parts[1]);
+                    if (!isNaN(num) && num > maxNum) maxNum = num;
+                }
+            });
+            var newNum = String(maxNum + 1);
+            while (newNum.length < 5) newNum = '0' + newNum;
+            return prefix + '-' + newNum;
+        }
+
+        function findItemById(id) {
+            for (var i = 0; i < inventory.length; i++) {
+                if (inventory[i].id === id) {
+                    return inventory[i];
+                }
+            }
+            return null;
+        }
+
+        function findRequestById(id) {
+            for (var i = 0; i < requests.length; i++) {
+                if (requests[i].id === id) {
+                    return requests[i];
+                }
+            }
+            return null;
+        }
+
+        function getStatusText(status) {
+            var map = {
+                'pending': 'ثبت شده',
+                'production': 'تایید مدیر تولید',
+                'factory': 'تایید مدیر کارخانه',
+                'approved': 'تایید نهایی',
+                'rejected': 'رد شده',
+                'delivered': 'تحویل داده شده'
+            };
+            return map[status] || status;
+        }
+
+        function getStatusClass(status) {
+            var map = {
+                'pending': 'pending',
+                'production': 'production',
+                'factory': 'factory',
+                'approved': 'approved',
+                'rejected': 'rejected',
+                'delivered': 'delivered'
+            };
+            return map[status] || 'pending';
+        }
+
+        function getRequestTypeText(type) {
+            var map = {
+                'consumable': 'مصرفی',
+                'returnable': 'برگشت‌پذیر',
+                'purchase': 'خرید'
+            };
+            return map[type] || type;
+        }
+
+        function getPriorityText(priority) {
+            var map = {
+                'normal': 'عادی',
+                'urgent': 'فوری',
+                'critical': 'خیلی فوری'
+            };
+            return map[priority] || priority;
+        }
+
+        function getPriorityBadge(priority) {
+            var map = {
+                'normal': 'badge info',
+                'urgent': 'badge warning',
+                'critical': 'badge danger'
+            };
+            return map[priority] || 'badge';
+        }
+
+        function getStatus(qty, threshold) {
+            if (qty === 0) return 'تمام شده';
+            if (qty < threshold) return 'کمتر از حد';
+            return 'موجود';
+        }
+
+        function getStatusFilter(status) {
+            if (status === 'تمام شده') return 'outOfStock';
+            if (status === 'کمتر از حد') return 'lowStock';
+            if (status === 'موجود') return 'inStock';
+            return 'all';
+        }
+
+        // ============================================================
+        //  تبدیل تاریخ به شمسی
+        // ============================================================
+        function toPersianDate(dateString) {
+            var gDate = new Date(dateString);
+            if (isNaN(gDate.getTime())) {
+                gDate = new Date();
+            }
+            var gYear = gDate.getFullYear();
+            var gMonth = gDate.getMonth() + 1;
+            var gDay = gDate.getDate();
+            var gDaysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            var jDaysInMonth = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+            var gy = gYear - 1600;
+            var gm = gMonth - 1;
+            var gd = gDay - 1;
+            var gDayNo = 365 * gy + Math.floor((gy + 3) / 4) - Math.floor((gy + 99) / 100) + Math.floor((gy + 399) / 400);
+            for (var i = 0; i < gm; ++i) {
+                gDayNo += gDaysInMonth[i];
+            }
+            if (gm > 1 && ((gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0))) {
+                gDayNo++;
+            }
+            gDayNo += gd;
+            var jDayNo = gDayNo - 79;
+            var jYear = 0;
+            var jMonth = 0;
+            var jDay = 0;
+            var jNp = Math.floor(jDayNo / 12053);
+            jDayNo %= 12053;
+            jYear = 979 + 33 * jNp + 4 * Math.floor(jDayNo / 1461);
+            jDayNo %= 1461;
+            if (jDayNo >= 366) {
+                jYear += Math.floor((jDayNo - 1) / 365);
+                jDayNo = (jDayNo - 1) % 365;
+            }
+            for (var i = 0; i < 11 && jDayNo >= jDaysInMonth[i]; ++i) {
+                jDayNo -= jDaysInMonth[i];
+                jMonth++;
+            }
+            jDay = jDayNo + 1;
+            jMonth++;
+            return {
+                year: jYear,
+                month: String(jMonth).padStart(2, '0'),
+                day: String(jDay).padStart(2, '0')
+            };
+        }
+
+        function generateRequestNumber() {
+            var now = new Date();
+            var persian = toPersianDate(now);
+            var year = String(persian.year);
+            var month = persian.month;
+            var maxNum = 0;
+            for (var i = 0; i < requests.length; i++) {
+                var code = requests[i].requestNumber;
+                if (code) {
+                    var parts = code.split('-');
+                    if (parts.length === 3 && parts[0] === year && parts[1] === month) {
+                        var num = parseInt(parts[2]);
+                        if (!isNaN(num) && num > maxNum) maxNum = num;
+                    }
+                }
+            }
+            var newNum = String(maxNum + 1).padStart(3, '0');
+            return year + '-' + month + '-' + newNum;
+        }
+
+        // ============================================================
+        //  توابع PDF
+        // ============================================================
+        function generatePDF(element, filename) {
+            if (typeof html2pdf === 'undefined') {
+                alert('کتابخانه PDF بارگذاری نشد. لطفاً اتصال اینترنت را بررسی کنید.');
+                return;
+            }
+            try {
+                var opt = {
+                    margin: [10, 10, 10, 10],
+                    filename: filename || 'document.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,
+                        logging: false,
+                        letterRendering: true,
+                        allowTaint: true
+                    },
+                    jsPDF: {
+                        unit: 'mm',
+                        format: 'a4',
+                        orientation: 'portrait'
+                    },
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                };
+                html2pdf().set(opt).from(element).save();
+            } catch (e) {
+                alert('خطا در تولید PDF: ' + e.message);
+                console.error('PDF Error:', e);
+            }
+        }
+
+        // ============================================================
+        //  توابع PDF برای تاریخچه ورود و خروج
+        // ============================================================
+        function exportExitHistoryPDF() {
+            if (exitHistory.length === 0) {
+                alert('هیچ تاریخچه خروجی برای خروجی وجود ندارد.');
+                return;
+            }
+
+            var pdfContent = document.createElement('div');
+            pdfContent.style.direction = 'rtl';
+            pdfContent.style.padding = '40px';
+            pdfContent.style.fontFamily = 'Segoe UI, Tahoma, sans-serif';
+            pdfContent.style.maxWidth = '800px';
+            pdfContent.style.margin = '0 auto';
+            pdfContent.style.background = '#fff';
+
+            var html = '';
+            html += '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #2c7be0; padding-bottom:15px; margin-bottom:20px;">';
+            html += '<div style="display:flex; align-items:center; gap:15px;">';
+            html += '<span style="font-size:45px; line-height:1;">🏭</span>';
+            html += '<span style="font-size:20px; font-weight:700; color:#0f2027;">ساخت و تجهیز رستاک</span>';
+            html += '</div>';
+            html += '<div style="text-align:left; direction:ltr;"><div style="font-size:12px; color:#5e6f8d; text-align:left;">گزارش تاریخچه خروج کالا</div></div>';
+            html += '</div>';
+
+            html += '<h3 style="text-align:center; margin-bottom:20px; color:#0f2027;">تاریخچه خروج کالا از انبار</h3>';
+
+            html += '<table style="width:100%; border-collapse:collapse; font-size:14px;">';
+            html += '<thead><tr style="background:#2c7be0; color:#fff;">';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">#</th>';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">شماره درخواست</th>';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">نام کالا</th>';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">تعداد</th>';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">تحویل‌گیرنده</th>';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">تاریخ</th>';
+            html += '</tr></thead><tbody>';
+
+            for (var i = 0; i < exitHistory.length; i++) {
+                var exit = exitHistory[i];
+                var req = findRequestById(exit.requestId);
+                var reqDisplay = req ? (req.requestNumber || '#' + req.id) : '-';
+                var items = req ? req.items : [];
+                var itemNames = [];
+                for (var j = 0; j < items.length; j++) {
+                    var invItem = findItemById(items[j].itemId);
+                    itemNames.push(invItem ? invItem.name : 'نامشخص');
+                }
+                var itemDisplay = itemNames.join('، ');
+                html += '<tr>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + (i + 1) + '</td>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + reqDisplay + '</td>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + itemDisplay + '</td>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + exit.totalQuantity + '</td>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + exit.receiver + '</td>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + exit.date + '</td>';
+                html += '</tr>';
+            }
+            html += '</tbody></table>';
+
+            html += '<div style="text-align:center; font-size:11px; color:#8a9bb5; margin-top:20px; border-top:1px solid #eef2f7; padding-top:15px;">';
+            html += 'تاریخ چاپ: ' + new Date().toLocaleDateString('fa-IR') + ' - این گزارش به صورت خودکار توسط سیستم مدیریت انبار تولید شده است.';
+            html += '</div>';
+
+            pdfContent.innerHTML = html;
+
+            var tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.top = '0';
+            tempDiv.appendChild(pdfContent);
+            document.body.appendChild(tempDiv);
+
+            setTimeout(function() {
+                generatePDF(pdfContent, 'تاریخچه_خروج_کالا.pdf');
+                setTimeout(function() {
+                    if (tempDiv.parentNode) {
+                        document.body.removeChild(tempDiv);
+                    }
+                }, 1000);
+            }, 300);
+        }
+
+        function exportEntryHistoryPDF() {
+            if (entryHistory.length === 0) {
+                alert('هیچ تاریخچه ورودی برای خروجی وجود ندارد.');
+                return;
+            }
+
+            var pdfContent = document.createElement('div');
+            pdfContent.style.direction = 'rtl';
+            pdfContent.style.padding = '40px';
+            pdfContent.style.fontFamily = 'Segoe UI, Tahoma, sans-serif';
+            pdfContent.style.maxWidth = '800px';
+            pdfContent.style.margin = '0 auto';
+            pdfContent.style.background = '#fff';
+
+            var html = '';
+            html += '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #2c7be0; padding-bottom:15px; margin-bottom:20px;">';
+            html += '<div style="display:flex; align-items:center; gap:15px;">';
+            html += '<span style="font-size:45px; line-height:1;">🏭</span>';
+            html += '<span style="font-size:20px; font-weight:700; color:#0f2027;">ساخت و تجهیز رستاک</span>';
+            html += '</div>';
+            html += '<div style="text-align:left; direction:ltr;"><div style="font-size:12px; color:#5e6f8d; text-align:left;">گزارش تاریخچه ورود کالا</div></div>';
+            html += '</div>';
+
+            html += '<h3 style="text-align:center; margin-bottom:20px; color:#0f2027;">تاریخچه ورود کالا به انبار</h3>';
+
+            html += '<table style="width:100%; border-collapse:collapse; font-size:14px;">';
+            html += '<thead><tr style="background:#2c7be0; color:#fff;">';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">#</th>';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">نام کالا</th>';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">کد کالا</th>';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">تعداد</th>';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">تحویل‌دهنده</th>';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">تاریخ</th>';
+            html += '</tr></thead><tbody>';
+
+            for (var i = 0; i < entryHistory.length; i++) {
+                var entry = entryHistory[i];
+                var invItem = findItemById(entry.itemId);
+                var itemName = invItem ? invItem.name : 'نامشخص';
+                var itemCode = invItem ? invItem.code : '---';
+                html += '<tr>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + (i + 1) + '</td>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + itemName + '</td>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + itemCode + '</td>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + entry.quantity + '</td>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + entry.supplier + '</td>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + entry.date + '</td>';
+                html += '</tr>';
+            }
+            html += '</tbody></table>';
+
+            html += '<div style="text-align:center; font-size:11px; color:#8a9bb5; margin-top:20px; border-top:1px solid #eef2f7; padding-top:15px;">';
+            html += 'تاریخ چاپ: ' + new Date().toLocaleDateString('fa-IR') + ' - این گزارش به صورت خودکار توسط سیستم مدیریت انبار تولید شده است.';
+            html += '</div>';
+
+            pdfContent.innerHTML = html;
+
+            var tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.top = '0';
+            tempDiv.appendChild(pdfContent);
+            document.body.appendChild(tempDiv);
+
+            setTimeout(function() {
+                generatePDF(pdfContent, 'تاریخچه_ورود_کالا.pdf');
+                setTimeout(function() {
+                    if (tempDiv.parentNode) {
+                        document.body.removeChild(tempDiv);
+                    }
+                }, 1000);
+            }, 300);
+        }
+
+        // ============================================================
+        //  توابع PDF درخواست و لیست کالاها (همانند قبل)
+        // ============================================================
+        window.generateRequestPDF = function(id) {
+            var req = findRequestById(id);
+            if (!req) {
+                alert('درخواست یافت نشد!');
+                return;
+            }
+            var displayNumber = req.requestNumber || ('#' + req.id);
+            document.getElementById('pdfTitle').textContent = 'فرم درخواست کالا';
+            var codeSpan = document.getElementById('pdfRequestCode');
+            if (codeSpan) {
+                codeSpan.textContent = displayNumber;
+            }
+            document.getElementById('pdfSubTitle').innerHTML = 'شماره: <span id="pdfRequestCode" style="display:inline-block; direction:ltr; unicode-bidi:isolate; font-weight:700;">' + displayNumber + '</span>';
+            document.getElementById('pdfType').textContent = getRequestTypeText(req.type);
+            document.getElementById('pdfRequester').textContent = req.requester;
+            document.getElementById('pdfPriority').textContent = getPriorityText(req.priority);
+            var persianDate = toPersianDate(req.date);
+            document.getElementById('pdfDate').textContent = persianDate.year + '/' + persianDate.month + '/' + persianDate.day;
+            document.getElementById('pdfDescription').textContent = req.description || '---';
+            var itemsHtml = '';
+            if (req.items && req.items.length > 0) {
+                for (var i = 0; i < req.items.length; i++) {
+                    var item = req.items[i];
+                    var invItem = findItemById(item.itemId);
+                    var itemName = invItem ? invItem.name : 'نامشخص';
+                    var itemCode = invItem ? invItem.code : '---';
+                    itemsHtml += '<tr>' +
+                        '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + (i + 1) + '</td>' +
+                        '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + itemName + '</td>' +
+                        '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + itemCode + '</td>' +
+                        '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + item.quantity + '</td>' +
+                        '</tr>';
+                }
+            } else {
+                itemsHtml = '<tr><td colspan="4" style="padding:15px; text-align:center; color:#8a9bb5;">هیچ قلمی ثبت نشده است.</td></tr>';
+            }
+            document.getElementById('pdfItemsBody').innerHTML = itemsHtml;
+            var pdfInner = document.getElementById('pdfInner');
+            pdfInner.style.display = 'block';
+            setTimeout(function() {
+                generatePDF(pdfInner, 'درخواست_' + displayNumber + '.pdf');
+            }, 300);
+        };
+
+        function exportInventoryPDF() {
+            var statusFilter = filterStatusSelect.value;
+            var statusText = '';
+            if (statusFilter === 'all') statusText = 'همه کالاها';
+            else if (statusFilter === 'inStock') statusText = 'کالاهای موجود';
+            else if (statusFilter === 'lowStock') statusText = 'کالاهای کم‌موجود';
+            else if (statusFilter === 'outOfStock') statusText = 'کالاهای تمام شده';
+            var filtered = [];
+            for (var i = 0; i < inventory.length; i++) {
+                var item = inventory[i];
+                var status = getStatus(item.quantity, item.threshold);
+                var statusKey = getStatusFilter(status);
+                if (statusFilter === 'all' || statusKey === statusFilter) {
+                    filtered.push(item);
+                }
+            }
+            if (filtered.length === 0) {
+                alert('هیچ کالایی برای خروجی وجود ندارد.');
+                return;
+            }
+            var pdfContent = document.createElement('div');
+            pdfContent.style.direction = 'rtl';
+            pdfContent.style.padding = '40px';
+            pdfContent.style.fontFamily = 'Segoe UI, Tahoma, sans-serif';
+            pdfContent.style.maxWidth = '800px';
+            pdfContent.style.margin = '0 auto';
+            pdfContent.style.background = '#fff';
+            var html = '';
+            html += '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #2c7be0; padding-bottom:15px; margin-bottom:20px;">';
+            html += '<div style="display:flex; align-items:center; gap:15px;">';
+            html += '<span style="font-size:45px; line-height:1;">🏭</span>';
+            html += '<span style="font-size:20px; font-weight:700; color:#0f2027;">ساخت و تجهیز رستاک</span>';
+            html += '</div>';
+            html += '<div style="text-align:left; direction:ltr;"><div style="font-size:12px; color:#5e6f8d; text-align:left;">گزارش لیست کالاها</div></div>';
+            html += '</div>';
+            html += '<h3 style="text-align:center; margin-bottom:20px; color:#0f2027;">' + statusText + '</h3>';
+            html += '<table style="width:100%; border-collapse:collapse; font-size:14px;">';
+            html += '<thead><tr style="background:#2c7be0; color:#fff;">';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">ردیف</th>';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">نام کالا</th>';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">کد</th>';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">دسته</th>';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">تعداد</th>';
+            html += '<th style="padding:10px; border:1px solid #dce3ec; text-align:center;">وضعیت</th>';
+            html += '</tr></thead><tbody>';
+            for (var i = 0; i < filtered.length; i++) {
+                var item = filtered[i];
+                var status = getStatus(item.quantity, item.threshold);
+                var badgeColor = status === 'تمام شده' ? '#e74c3c' : (status === 'کمتر از حد' ? '#e67e22' : '#27ae60');
+                html += '<tr>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + (i + 1) + '</td>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + item.name + '</td>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + item.code + '</td>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + item.category + '</td>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center;">' + item.quantity + '</td>';
+                html += '<td style="padding:8px; border:1px solid #dce3ec; text-align:center; color:' + badgeColor + '; font-weight:600;">' + status + '</td>';
+                html += '</tr>';
+            }
+            html += '</tbody></table>';
+            html += '<div style="text-align:center; font-size:11px; color:#8a9bb5; margin-top:20px; border-top:1px solid #eef2f7; padding-top:15px;">';
+            html += 'تاریخ چاپ: ' + new Date().toLocaleDateString('fa-IR') + ' - این گزارش به صورت خودکار توسط سیستم مدیریت انبار تولید شده است.';
+            html += '</div>';
+            pdfContent.innerHTML = html;
+            var tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.top = '0';
+            tempDiv.appendChild(pdfContent);
+            document.body.appendChild(tempDiv);
+            setTimeout(function() {
+                generatePDF(pdfContent, 'لیست_کالاها_' + statusText + '.pdf');
+                setTimeout(function() {
+                    if (tempDiv.parentNode) {
+                        document.body.removeChild(tempDiv);
+                    }
+                }, 1000);
+            }, 300);
+        }
+
+        // ============================================================
+        //  DOM Elements
+        // ============================================================
+        var loginPage = document.getElementById('loginPage');
+        var dashboardWrapper = document.getElementById('dashboardWrapper');
+        var loginBtn = document.getElementById('loginBtn');
+        var usernameInput = document.getElementById('username');
+        var passwordInput = document.getElementById('password');
+        var togglePassBtn = document.getElementById('togglePassBtn');
+        var rememberMe = document.getElementById('rememberMe');
+        var navbarLogout = document.getElementById('navbarLogout');
+        var displayUser = document.getElementById('displayUser');
+        var roleSelector = document.getElementById('roleSelector');
+        var pageContents = document.querySelectorAll('.page-content');
+        var menuLinks = document.querySelectorAll('.navbar-menu a[data-page]');
+        var tableBody = document.getElementById('inventoryTableBody');
+        var searchInput = document.getElementById('searchInput');
+        var filterStatusSelect = document.getElementById('filterStatus');
+        var exportPdfBtn = document.getElementById('exportPdfBtn');
+        var totalItemsEl = document.getElementById('totalItems');
+        var inStockItemsEl = document.getElementById('inStockItems');
+        var lowStockItemsEl = document.getElementById('lowStockItems');
+        var outOfStockItemsEl = document.getElementById('outOfStockItems');
+        var lowStockList = document.getElementById('lowStockList');
+        var outOfStockList = document.getElementById('outOfStockList');
+        var pendingRequestsEl = document.getElementById('pendingRequests');
+        var approvedRequestsEl = document.getElementById('approvedRequests');
+        var submitAddItem = document.getElementById('submitAddItem');
+        var newName = document.getElementById('newName');
+        var newCategory = document.getElementById('newCategory');
+        var generatedCode = document.getElementById('generatedCode');
+        var newQuantity = document.getElementById('newQuantity');
+        var newThreshold = document.getElementById('newThreshold');
+        var addItemMessage = document.getElementById('addItemMessage');
+        var exitRequestSelect = document.getElementById('exitRequestSelect');
+        var exitReceiver = document.getElementById('exitReceiver');
+        var submitExit = document.getElementById('submitExit');
+        var exitMessage = document.getElementById('exitMessage');
+        var exitHistoryBody = document.getElementById('exitHistoryBody');
+        var entrySelect = document.getElementById('entrySelect');
+        var entryQuantity = document.getElementById('entryQuantity');
+        var entrySupplier = document.getElementById('entrySupplier');
+        var submitEntry = document.getElementById('submitEntry');
+        var entryMessage = document.getElementById('entryMessage');
+        var entryHistoryBody = document.getElementById('entryHistoryBody');
+        var requestType = document.getElementById('requestType');
+        var requestRequester = document.getElementById('requestRequester');
+        var requestPriority = document.getElementById('requestPriority');
+        var requestDescription = document.getElementById('requestDescription');
+        var submitRequest = document.getElementById('submitRequest');
+        var requestMessage = document.getElementById('requestMessage');
+        var requestsTableBody = document.getElementById('requestsTableBody');
+        var requestFilterStatus = document.getElementById('requestFilterStatus');
+        var requestSearch = document.getElementById('requestSearch');
+        var requestItemsContainer = document.getElementById('requestItemsContainer');
+        var addItemRowBtn = document.getElementById('addItemRowBtn');
+        var settingsUsername = document.getElementById('settingsUsername');
+        var changeUsernameBtn = document.getElementById('changeUsernameBtn');
+        var settingsCurrentPassword = document.getElementById('settingsCurrentPassword');
+        var settingsNewPassword = document.getElementById('settingsNewPassword');
+        var settingsConfirmPassword = document.getElementById('settingsConfirmPassword');
+        var changePasswordBtn = document.getElementById('changePasswordBtn');
+        var settingsMessage = document.getElementById('settingsMessage');
+        var darkModeToggle = document.getElementById('darkModeToggle');
+        var notificationToggle = document.getElementById('notificationToggle');
+        var backupBtn = document.getElementById('backupBtn');
+        var editModal = document.getElementById('editModal');
+        var editName = document.getElementById('editName');
+        var editCategory = document.getElementById('editCategory');
+        var editQuantity = document.getElementById('editQuantity');
+        var editThreshold = document.getElementById('editThreshold');
+        var editSaveBtn = document.getElementById('editSaveBtn');
+        var editCancelBtn = document.getElementById('editCancelBtn');
+        var viewRequestModal = document.getElementById('viewRequestModal');
+        var viewRequestTitle = document.getElementById('viewRequestTitle');
+        var viewRequestInfo = document.getElementById('viewRequestInfo');
+        var viewRequestItems = document.getElementById('viewRequestItems');
+        var closeViewModal = document.getElementById('closeViewModal');
+        var viewPdfBtn = document.getElementById('viewPdfBtn');
+        var pdfContent = document.getElementById('pdfContent');
+        var pdfInner = document.getElementById('pdfInner');
+        var pdfRequestCode = document.getElementById('pdfRequestCode');
+        var pdfType = document.getElementById('pdfType');
+        var pdfRequester = document.getElementById('pdfRequester');
+        var pdfPriority = document.getElementById('pdfPriority');
+        var pdfDate = document.getElementById('pdfDate');
+        var pdfDescription = document.getElementById('pdfDescription');
+        var pdfItemsBody = document.getElementById('pdfItemsBody');
+        var requestItemRows = [];
+
+        // ============================================================
+        //  توابع مدیریت اقلام درخواست
+        // ============================================================
+        function addRequestItemRow(itemId, quantity) {
+            if (itemId === undefined) itemId = '';
+            if (quantity === undefined) quantity = 1;
+            var rowId = 'row_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+            var rowDiv = document.createElement('div');
+            rowDiv.className = 'request-item-row';
+            rowDiv.id = rowId;
+            var datalistId = 'datalist_' + rowId;
+            var datalist = document.createElement('datalist');
+            datalist.id = datalistId;
+            document.body.appendChild(datalist);
+            for (var i = 0; i < inventory.length; i++) {
+                var opt = document.createElement('option');
+                opt.value = inventory[i].name + ' (' + inventory[i].code + ')';
+                opt.dataset.id = inventory[i].id;
+                datalist.appendChild(opt);
+            }
+            var selectedItem = findItemById(itemId);
+            var selectedValue = selectedItem ? selectedItem.name + ' (' + selectedItem.code + ')' : '';
+            var html = '';
+            html += '<div style="flex:2; min-width:150px;">';
+            html += '<input type="text" class="item-search-input" list="' + datalistId + '" placeholder="جستجوی کالا..." value="' +
+                selectedValue + '" style="width:100%; padding:8px 12px; border:2px solid #e2e8f0; border-radius:8px; font-size:14px;" />';
+            html += '</div>';
+            html += '<div style="flex:1; min-width:80px;">';
+            html += '<input type="number" class="item-quantity-input" value="' + quantity +
+                '" min="1" style="width:100%; padding:8px 12px; border:2px solid #e2e8f0; border-radius:8px; font-size:14px;" />';
+            html += '</div>';
+            html += '<div>';
+            html += '<button class="btn-remove-item" onclick="removeRequestItemRow(\'' + rowId + '\')"><i class="fas fa-times"></i></button>';
+            html += '</div>';
+            rowDiv.innerHTML = html;
+            rowDiv.dataset.datalistId = datalistId;
+            var input = rowDiv.querySelector('.item-search-input');
+            var qtyInput = rowDiv.querySelector('.item-quantity-input');
+            input.addEventListener('change', function() {
+                var val = this.value;
+                var selected = null;
+                for (var i = 0; i < inventory.length; i++) {
+                    if (val === inventory[i].name + ' (' + inventory[i].code + ')') {
+                        selected = inventory[i];
+                        break;
+                    }
+                }
+                if (selected) {
+                    this.dataset.itemId = selected.id;
+                    this.style.borderColor = '#27ae60';
+                } else {
+                    this.dataset.itemId = '';
+                    this.style.borderColor = '#e74c3c';
+                }
+            });
+            if (selectedItem) {
+                input.dataset.itemId = selectedItem.id;
+                input.style.borderColor = '#27ae60';
+            }
+            requestItemsContainer.appendChild(rowDiv);
+            requestItemRows.push(rowId);
+            updateDatalist(datalistId);
+        }
+
+        function updateDatalist(datalistId) {
+            var datalist = document.getElementById(datalistId);
+            if (!datalist) return;
+            datalist.innerHTML = '';
+            for (var i = 0; i < inventory.length; i++) {
+                var opt = document.createElement('option');
+                opt.value = inventory[i].name + ' (' + inventory[i].code + ')';
+                opt.dataset.id = inventory[i].id;
+                datalist.appendChild(opt);
+            }
+        }
+
+        function removeRequestItemRow(rowId) {
+            var row = document.getElementById(rowId);
+            if (!row) return;
+            var datalistId = row.dataset.datalistId;
+            if (datalistId) {
+                var datalist = document.getElementById(datalistId);
+                if (datalist) datalist.remove();
+            }
+            row.remove();
+            var index = requestItemRows.indexOf(rowId);
+            if (index > -1) {
+                requestItemRows.splice(index, 1);
+            }
+        }
+
+        function clearRequestItems() {
+            for (var i = requestItemRows.length - 1; i >= 0; i--) {
+                var row = document.getElementById(requestItemRows[i]);
+                if (row) {
+                    var datalistId = row.dataset.datalistId;
+                    if (datalistId) {
+                        var datalist = document.getElementById(datalistId);
+                        if (datalist) datalist.remove();
+                    }
+                    row.remove();
+                }
+            }
+            requestItemRows = [];
+            addRequestItemRow();
+        }
+
+        function getRequestItemsData() {
+            var items = [];
+            var rows = document.querySelectorAll('.request-item-row');
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var input = row.querySelector('.item-search-input');
+                var qtyInput = row.querySelector('.item-quantity-input');
+                var itemId = parseInt(input.dataset.itemId);
+                var quantity = parseInt(qtyInput.value);
+                if (itemId && !isNaN(quantity) && quantity > 0) {
+                    items.push({ itemId: itemId, quantity: quantity });
+                }
+            }
+            return items;
+        }
+
+        // ============================================================
+        //  توابع اصلی
+        // ============================================================
+        window.deleteItem = function(id) {
+            var item = findItemById(id);
+            if (!item) {
+                alert('کالا یافت نشد!');
+                return;
+            }
+            if (confirm('آیا از حذف کالا "' + item.name + '" مطمئن هستید؟')) {
+                var newInventory = [];
+                for (var i = 0; i < inventory.length; i++) {
+                    if (inventory[i].id !== id) {
+                        newInventory.push(inventory[i]);
+                    }
+                }
+                inventory = newInventory;
+                renderTable();
+                updateStats();
+                populateSelects();
+                populateExitRequests();
+                updateDatalists();
+                clearRequestItems();
+                saveData();
+                showMessage(exitMessage, '✅ کالا "' + item.name + '" با موفقیت حذف شد.', 'success');
+            }
+        };
+
+        window.openEditModal = function(id) {
+            var item = findItemById(id);
+            if (!item) {
+                alert('کالا یافت نشد!');
+                return;
+            }
+            editingItemId = id;
+            editName.value = item.name;
+            editCategory.value = item.category;
+            editQuantity.value = item.quantity;
+            editThreshold.value = item.threshold;
+            editModal.classList.add('active');
+        };
+
+        function closeEditModal() {
+            editModal.classList.remove('active');
+            editingItemId = null;
+        }
+
+        function saveEdit() {
+            if (editingItemId === null) {
+                alert('هیچ کالایی برای ویرایش انتخاب نشده است.');
+                return;
+            }
+            var newNameVal = editName.value.trim();
+            var newCategoryVal = editCategory.value;
+            var newQuantityVal = parseInt(editQuantity.value);
+            var newThresholdVal = parseInt(editThreshold.value);
+            if (!newNameVal || !newCategoryVal) {
+                alert('لطفاً نام و دسته‌بندی را وارد کنید.');
+                return;
+            }
+            if (isNaN(newQuantityVal) || newQuantityVal < 0) {
+                alert('تعداد معتبر وارد کنید.');
+                return;
+            }
+            if (isNaN(newThresholdVal) || newThresholdVal < 0) {
+                alert('حد مجاز معتبر وارد کنید.');
+                return;
+            }
+            var item = findItemById(editingItemId);
+            if (item) {
+                item.name = newNameVal;
+                item.category = newCategoryVal;
+                item.quantity = newQuantityVal;
+                item.threshold = newThresholdVal;
+            }
+            closeEditModal();
+            renderTable();
+            updateStats();
+            populateSelects();
+            populateExitRequests();
+            updateDatalists();
+            clearRequestItems();
+            saveData();
+            showMessage(exitMessage, '✅ کالا با موفقیت ویرایش شد.', 'success');
+        }
+
+        function renderTable() {
+            var filter = searchInput.value.toLowerCase().trim();
+            var statusFilter = filterStatusSelect.value;
+            var filtered = [];
+            for (var i = 0; i < inventory.length; i++) {
+                var item = inventory[i];
+                var status = getStatus(item.quantity, item.threshold);
+                var statusKey = getStatusFilter(status);
+                var matchSearch = item.name.toLowerCase().includes(filter) ||
+                    item.code.toLowerCase().includes(filter) ||
+                    item.category.toLowerCase().includes(filter);
+                var matchStatus = statusFilter === 'all' || statusKey === statusFilter;
+                if (matchSearch && matchStatus) {
+                    filtered.push(item);
+                }
+            }
+            filtered.sort(function(a, b) { return a.id - b.id; });
+            if (filtered.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" style="padding:30px; color:#8a9bb5;">کالایی یافت نشد</td></tr>';
+            } else {
+                var html = '';
+                for (var j = 0; j < filtered.length; j++) {
+                    var item = filtered[j];
+                    var status = getStatus(item.quantity, item.threshold);
+                    var badgeClass = 'badge';
+                    if (status === 'کمتر از حد') badgeClass += ' warning';
+                    else if (status === 'تمام شده') badgeClass += ' danger';
+                    html += '<tr>' +
+                        '<td>' + (j + 1) + '</td>' +
+                        '<td><strong>' + item.name + '</strong></td>' +
+                        '<td>' + item.code + '</td>' +
+                        '<td>' + item.category + '</td>' +
+                        '<td>' + item.quantity + '</td>' +
+                        '<td><span class="' + badgeClass + '">' + status + '</span></td>' +
+                        '<td>' +
+                        '<button class="action-btn edit" data-id="' + item.id + '" title="ویرایش"><i class="fas fa-edit"></i></button>' +
+                        '<button class="action-btn delete" data-id="' + item.id + '" title="حذف"><i class="fas fa-trash-alt"></i></button>' +
+                        '</td>' +
+                        '</tr>';
+                }
+                tableBody.innerHTML = html;
+            }
+            var editBtns = document.querySelectorAll('.action-btn.edit');
+            for (var e = 0; e < editBtns.length; e++) {
+                (function(btn) {
+                    btn.addEventListener('click', function() {
+                        var id = parseInt(this.getAttribute('data-id'));
+                        openEditModal(id);
+                    });
+                })(editBtns[e]);
+            }
+            var deleteBtns = document.querySelectorAll('.action-btn.delete');
+            for (var d = 0; d < deleteBtns.length; d++) {
+                (function(btn) {
+                    btn.addEventListener('click', function() {
+                        var id = parseInt(this.getAttribute('data-id'));
+                        deleteItem(id);
+                    });
+                })(deleteBtns[d]);
+            }
+            updateStats();
+            populateSelects();
+            populateExitRequests();
+            updateDatalists();
+        }
+
+        function updateStats() {
+            var total = inventory.length;
+            var inStock = 0;
+            var lowStock = [];
+            var outOfStock = [];
+            for (var i = 0; i < inventory.length; i++) {
+                var item = inventory[i];
+                if (item.quantity > 0) {
+                    inStock++;
+                    if (item.quantity < item.threshold) {
+                        lowStock.push(item);
+                    }
+                } else {
+                    outOfStock.push(item);
+                }
+            }
+            totalItemsEl.textContent = total;
+            inStockItemsEl.textContent = inStock;
+            lowStockItemsEl.textContent = lowStock.length;
+            outOfStockItemsEl.textContent = outOfStock.length;
+            if (lowStock.length > 0) {
+                var lowHtml = '';
+                for (var l = 0; l < lowStock.length; l++) {
+                    lowHtml += '<span class="item-name">⚡ ' + lowStock[l].name + ' (' + lowStock[l].quantity + ' عدد)</span>';
+                }
+                lowStockList.innerHTML = lowHtml;
+            } else {
+                lowStockList.innerHTML = '<span style="color:#27ae60;">✅ همه کالاها در حد مجاز هستند</span>';
+            }
+            if (outOfStock.length > 0) {
+                var outHtml = '';
+                for (var o = 0; o < outOfStock.length; o++) {
+                    outHtml += '<span class="item-name">❌ ' + outOfStock[o].name + '</span>';
+                }
+                outOfStockList.innerHTML = outHtml;
+            } else {
+                outOfStockList.innerHTML = '<span style="color:#27ae60;">✅ هیچ کالایی تمام نشده است</span>';
+            }
+            var pending = requests.filter(function(r) {
+                return r.status === 'pending' || r.status === 'production' || r.status === 'factory';
+            });
+            var approved = requests.filter(function(r) {
+                return r.status === 'approved';
+            });
+            pendingRequestsEl.textContent = pending.length;
+            approvedRequestsEl.textContent = approved.length;
+        }
+
+        function populateSelects() {
+            var options = '';
+            for (var i = 0; i < inventory.length; i++) {
+                var item = inventory[i];
+                options += '<option value="' + item.id + '">' + item.name + ' (' + item.code + ') - موجودی: ' + item.quantity + '</option>';
+            }
+            entrySelect.innerHTML = options;
+        }
+
+        function populateExitRequests() {
+            // ===== فقط درخواست‌های تایید شده که نوع خرید نیستند نمایش داده شوند =====
+            var approvedRequests = requests.filter(function(r) {
+                return r.status === 'approved' && r.type !== 'purchase';
+            });
+            var options = '';
+            if (approvedRequests.length === 0) {
+                options = '<option value="">هیچ درخواست تایید شده‌ای برای خروج وجود ندارد</option>';
+            } else {
+                for (var i = 0; i < approvedRequests.length; i++) {
+                    var req = approvedRequests[i];
+                    var totalItems = req.items ? req.items.length : 0;
+                    options += '<option value="' + req.id + '">' +
+                        req.requestNumber + ' - ' + req.requester + ' (' + totalItems + ' قلم) - ' +
+                        getRequestTypeText(req.type) +
+                        '</option>';
+                }
+            }
+            exitRequestSelect.innerHTML = options;
+        }
+
+        function updateDatalists() {
+            var datalists = document.querySelectorAll('datalist');
+            for (var i = 0; i < datalists.length; i++) {
+                var datalist = datalists[i];
+                if (datalist.id && datalist.id.startsWith('datalist_row_')) {
+                    updateDatalist(datalist.id);
+                }
+            }
+        }
+
+        function addItem(name, code, category, quantity, threshold) {
+            inventory.push({ id: nextItemId++, name: name, code: code, category: category, quantity: quantity,
+                threshold: threshold });
+            renderTable();
+            updateStats();
+            populateSelects();
+            populateExitRequests();
+            updateDatalists();
+            clearRequestItems();
+            saveData();
+        }
+
+        function showMessage(el, text, type) {
+            el.textContent = text;
+            el.className = 'message ' + type;
+            el.style.display = 'block';
+            setTimeout(function() {
+                el.style.display = 'none';
+            }, 4000);
+        }
+
+        // ============================================================
+        //  رندر تاریخچه ورود و خروج
+        // ============================================================
+        function renderExitHistory() {
+            if (exitHistory.length === 0) {
+                exitHistoryBody.innerHTML = '<tr><td colspan="6" style="padding:30px; color:#8a9bb5;">تاریخچه خروجی وجود ندارد</td></tr>';
+            } else {
+                var html = '';
+                for (var i = 0; i < exitHistory.length; i++) {
+                    var exit = exitHistory[i];
+                    var req = findRequestById(exit.requestId);
+                    var items = req ? req.items : [];
+                    var itemNames = [];
+                    for (var j = 0; j < items.length; j++) {
+                        var invItem = findItemById(items[j].itemId);
+                        itemNames.push(invItem ? invItem.name : 'نامشخص');
+                    }
+                    var itemDisplay = itemNames.join('، ');
+                    var reqDisplay = req ? (req.requestNumber || '#' + req.id) : '-';
+                    html += '<tr>' +
+                        '<td>' + exit.id + '</td>' +
+                        '<td>' + reqDisplay + '</td>' +
+                        '<td>' + itemDisplay + '</td>' +
+                        '<td>' + exit.totalQuantity + '</td>' +
+                        '<td>' + exit.receiver + '</td>' +
+                        '<td>' + exit.date + '</td>' +
+                        '</tr>';
+                }
+                exitHistoryBody.innerHTML = html;
+            }
+        }
+
+        function renderEntryHistory() {
+            if (entryHistory.length === 0) {
+                entryHistoryBody.innerHTML = '<tr><td colspan="5" style="padding:30px; color:#8a9bb5;">تاریخچه ورودی وجود ندارد</td></tr>';
+            } else {
+                var html = '';
+                for (var i = 0; i < entryHistory.length; i++) {
+                    var entry = entryHistory[i];
+                    var invItem = findItemById(entry.itemId);
+                    var itemName = invItem ? invItem.name : 'نامشخص';
+                    var itemCode = invItem ? invItem.code : '---';
+                    html += '<tr>' +
+                        '<td>' + entry.id + '</td>' +
+                        '<td>' + itemName + '</td>' +
+                        '<td>' + entry.quantity + '</td>' +
+                        '<td>' + entry.supplier + '</td>' +
+                        '<td>' + entry.date + '</td>' +
+                        '</tr>';
+                }
+                entryHistoryBody.innerHTML = html;
+            }
+        }
+
+        // ============================================================
+        // ===== منطق اصلی درخواست‌ها =====
+        // ============================================================
+        function renderRequests() {
+            var statusFilter = requestFilterStatus.value;
+            var searchFilter = requestSearch.value.toLowerCase().trim();
+            var filtered = [];
+            for (var i = 0; i < requests.length; i++) {
+                var req = requests[i];
+                var matchStatus = statusFilter === 'all' || req.status === statusFilter;
+                var matchSearch = req.requester.toLowerCase().includes(searchFilter) ||
+                    (req.requestNumber && req.requestNumber.includes(searchFilter));
+                if (matchStatus && matchSearch) {
+                    filtered.push(req);
+                }
+            }
+            filtered.sort(function(a, b) { return b.id - a.id; });
+            if (filtered.length === 0) {
+                requestsTableBody.innerHTML = '<tr><td colspan="7" style="padding:30px; color:#8a9bb5;">درخواستی یافت نشد</td></tr>';
+            } else {
+                var html = '';
+                for (var j = 0; j < filtered.length; j++) {
+                    var req = filtered[j];
+                    var totalItems = req.items ? req.items.length : 0;
+                    var canApprove = false;
+                    var canReject = false;
+                    var canUndo = false;
+                    var canDelete = false;
+
+                    // ===== تنظیم دسترسی‌ها =====
+                    if (req.status === 'pending') {
+                        if (currentRole === 'warehouse') {
+                            canApprove = true;
+                            canReject = true;
+                        }
+                        if (currentRole === 'production' && (req.type === 'consumable' || req.type === 'purchase')) {
+                            canApprove = true;
+                            canReject = true;
+                        }
+                        if (currentRole === 'warehouse') {
+                            canDelete = true;
+                        }
+                    } else if (req.status === 'production') {
+                        if (currentRole === 'factory' && req.type === 'purchase') {
+                            canApprove = true;
+                            canReject = true;
+                        }
+                        if (currentRole === 'production' && (req.type === 'consumable' || req.type === 'purchase')) {
+                            canUndo = true;
+                        }
+                        if (currentRole === 'warehouse') {
+                            canDelete = true;
+                        }
+                    } else if (req.status === 'factory') {
+                        if (currentRole === 'factory' && req.type === 'purchase') {
+                            canUndo = true;
+                        }
+                        if (currentRole === 'warehouse') {
+                            canDelete = true;
+                        }
+                    } else if (req.status === 'approved') {
+                        if (currentRole === 'warehouse') {
+                            canUndo = true;
+                            canDelete = true;
+                        }
+                        if (currentRole === 'production' && (req.type === 'consumable' || req.type === 'purchase')) {
+                            canUndo = true;
+                        }
+                        if (currentRole === 'factory' && req.type === 'purchase') {
+                            canUndo = true;
+                        }
+                    } else if (req.status === 'rejected') {
+                        if (currentRole === 'warehouse') {
+                            canUndo = true;
+                            canDelete = true;
+                        }
+                        if (currentRole === 'production' && (req.type === 'consumable' || req.type === 'purchase')) {
+                            canUndo = true;
+                        }
+                        if (currentRole === 'factory' && req.type === 'purchase') {
+                            canUndo = true;
+                        }
+                    }
+
+                    var statusText = getStatusText(req.status);
+                    var statusClass = getStatusClass(req.status);
+                    var priorityBadge = getPriorityBadge(req.priority);
+                    var priorityText = getPriorityText(req.priority);
+                    var typeText = getRequestTypeText(req.type);
+                    var displayNumber = req.requestNumber || ('#' + req.id);
+
+                    html += '<tr>' +
+                        '<td><span class="clickable-id" onclick="viewRequest(' + req.id + ')">' + displayNumber + '</span></td>' +
+                        '<td>' + typeText + '</td>' +
+                        '<td>' + totalItems + ' قلم</td>' +
+                        '<td>' + req.requester + '</td>' +
+                        '<td><span class="' + priorityBadge + '">' + priorityText + '</span></td>' +
+                        '<td><span class="request-status ' + statusClass + '">' + statusText + '</span></td>' +
+                        '<td>';
+
+                    if (canApprove) {
+                        html += '<button class="action-btn approve" data-id="' + req.id + '" title="تایید"><i class="fas fa-check"></i></button>';
+                    }
+                    if (canReject) {
+                        html += '<button class="action-btn reject" data-id="' + req.id + '" title="رد"><i class="fas fa-times"></i></button>';
+                    }
+                    if (canUndo) {
+                        html += '<button class="action-btn undo" data-id="' + req.id + '" title="برگشت تصمیم"><i class="fas fa-undo-alt"></i></button>';
+                    }
+                    if (canDelete) {
+                        html += '<button class="action-btn delete-request" onclick="deleteRequest(' + req.id + ')" title="حذف درخواست"><i class="fas fa-trash-alt"></i></button>';
+                    }
+                    html +=
+                        '<button class="action-btn view" onclick="viewRequest(' + req.id + ')" title="مشاهده"><i class="fas fa-eye"></i></button>';
+                    if (req.status === 'approved') {
+                        html +=
+                            '<button class="action-btn pdf" onclick="generateRequestPDF(' + req.id + ')" title="خروجی PDF"><i class="fas fa-file-pdf"></i></button>';
+                    }
+                    html += '</td></tr>';
+                }
+                requestsTableBody.innerHTML = html;
+            }
+
+            var approveBtns = document.querySelectorAll('.action-btn.approve');
+            for (var a = 0; a < approveBtns.length; a++) {
+                (function(btn) {
+                    btn.addEventListener('click', function() {
+                        var id = parseInt(this.getAttribute('data-id'));
+                        approveRequest(id);
+                    });
+                })(approveBtns[a]);
+            }
+
+            var rejectBtns = document.querySelectorAll('.action-btn.reject');
+            for (var r = 0; r < rejectBtns.length; r++) {
+                (function(btn) {
+                    btn.addEventListener('click', function() {
+                        var id = parseInt(this.getAttribute('data-id'));
+                        rejectRequest(id);
+                    });
+                })(rejectBtns[r]);
+            }
+
+            var undoBtns = document.querySelectorAll('.action-btn.undo');
+            for (var u = 0; u < undoBtns.length; u++) {
+                (function(btn) {
+                    btn.addEventListener('click', function() {
+                        var id = parseInt(this.getAttribute('data-id'));
+                        undoRequest(id);
+                    });
+                })(undoBtns[u]);
+            }
+
+            updateStats();
+            populateExitRequests();
+            saveData();
+        }
+
+        // ============================================================
+        // ===== حذف درخواست =====
+        // ============================================================
+        window.deleteRequest = function(id) {
+            var req = findRequestById(id);
+            if (!req) {
+                alert('درخواست یافت نشد!');
+                return;
+            }
+
+            if (req.status === 'delivered') {
+                alert('❌ درخواست تحویل شده قابل حذف نیست.');
+                return;
+            }
+
+            var canDelete = false;
+            var roleName = '';
+
+            if (currentRole === 'warehouse') {
+                canDelete = true;
+                roleName = 'انباردار';
+            } else if (currentRole === 'production' && (req.type === 'consumable' || req.type === 'purchase') && req.status === 'pending') {
+                canDelete = true;
+                roleName = 'مدیر تولید';
+            } else if (currentRole === 'factory' && req.type === 'purchase' && (req.status === 'pending' || req.status === 'production')) {
+                canDelete = true;
+                roleName = 'مدیر کارخانه';
+            }
+
+            if (!canDelete) {
+                alert('❌ شما مجاز به حذف این درخواست نیستید.');
+                return;
+            }
+
+            var confirmMsg = 'آیا از حذف درخواست "' + req.requestNumber + '" توسط ' + roleName + ' مطمئن هستید؟';
+            if (req.status === 'approved') {
+                confirmMsg = '⚠️ این درخواست تایید نهایی شده است. آیا از حذف آن مطمئن هستید؟';
+            }
+
+            if (confirm(confirmMsg)) {
+                var newRequests = [];
+                for (var i = 0; i < requests.length; i++) {
+                    if (requests[i].id !== id) {
+                        newRequests.push(requests[i]);
+                    }
+                }
+                requests = newRequests;
+                renderRequests();
+                saveData();
+                showMessage(requestMessage, '✅ درخواست توسط ' + roleName + ' حذف شد.', 'success');
+            }
+        };
+
+        // ============================================================
+        // ===== تایید درخواست =====
+        // ============================================================
+        function approveRequest(id) {
+            var req = findRequestById(id);
+            if (!req) {
+                alert('درخواست یافت نشد!');
+                return;
+            }
+            var nextStatus = '';
+            var roleName = '';
+
+            if (req.status === 'pending') {
+                if (currentRole === 'warehouse') {
+                    if (req.type === 'returnable' || req.type === 'consumable') {
+                        nextStatus = 'approved';
+                        roleName = 'انباردار';
+                    } else if (req.type === 'purchase') {
+                        nextStatus = 'production';
+                        roleName = 'انباردار';
+                    }
+                } else if (currentRole === 'production') {
+                    if (req.type === 'consumable') {
+                        nextStatus = 'approved';
+                        roleName = 'مدیر تولید';
+                    } else if (req.type === 'purchase') {
+                        nextStatus = 'production';
+                        roleName = 'مدیر تولید';
+                    }
+                }
+            } else if (req.status === 'production') {
+                if (currentRole === 'factory' && req.type === 'purchase') {
+                    nextStatus = 'approved';
+                    roleName = 'مدیر کارخانه';
+                }
+            }
+
+            if (!nextStatus) {
+                alert('شما مجاز به تایید این درخواست نیستید.');
+                return;
+            }
+
+            req.status = nextStatus;
+            renderRequests();
+            renderTable();
+            saveData();
+            showMessage(requestMessage, '✅ درخواست توسط ' + roleName + ' تایید شد.', 'success');
+        }
+
+        // ============================================================
+        // ===== رد درخواست =====
+        // ============================================================
+        function rejectRequest(id) {
+            var req = findRequestById(id);
+            if (!req) {
+                alert('درخواست یافت نشد!');
+                return;
+            }
+
+            var canReject = false;
+            var roleName = '';
+
+            if (req.status === 'pending') {
+                if (currentRole === 'warehouse') {
+                    canReject = true;
+                    roleName = 'انباردار';
+                } else if (currentRole === 'production' && (req.type === 'consumable' || req.type === 'purchase')) {
+                    canReject = true;
+                    roleName = 'مدیر تولید';
+                }
+            } else if (req.status === 'production') {
+                if (currentRole === 'factory' && req.type === 'purchase') {
+                    canReject = true;
+                    roleName = 'مدیر کارخانه';
+                }
+            }
+
+            if (!canReject) {
+                alert('شما مجاز به رد این درخواست نیستید.');
+                return;
+            }
+
+            if (confirm('آیا از رد این درخواست توسط ' + roleName + ' مطمئن هستید؟')) {
+                req.status = 'rejected';
+                renderRequests();
+                saveData();
+                showMessage(requestMessage, '⚠️ درخواست توسط ' + roleName + ' رد شد.', 'error');
+            }
+        }
+
+        // ============================================================
+        // ===== برگشت تصمیم =====
+        // ============================================================
+        function undoRequest(id) {
+            var req = findRequestById(id);
+            if (!req) {
+                alert('درخواست یافت نشد!');
+                return;
+            }
+            var undoStatus = '';
+            var roleName = '';
+            var statusBefore = req.status;
+
+            if (statusBefore === 'rejected') {
+                if (currentRole === 'warehouse') {
+                    undoStatus = 'pending';
+                    roleName = 'انباردار';
+                } else if (currentRole === 'production' && (req.type === 'consumable' || req.type === 'purchase')) {
+                    undoStatus = 'pending';
+                    roleName = 'مدیر تولید';
+                } else if (currentRole === 'factory' && req.type === 'purchase') {
+                    undoStatus = 'production';
+                    roleName = 'مدیر کارخانه';
+                }
+            } else if (statusBefore === 'production') {
+                if (currentRole === 'production' && (req.type === 'consumable' || req.type === 'purchase')) {
+                    undoStatus = 'pending';
+                    roleName = 'مدیر تولید';
+                } else if (currentRole === 'warehouse') {
+                    undoStatus = 'pending';
+                    roleName = 'انباردار';
+                }
+            } else if (statusBefore === 'factory') {
+                if (currentRole === 'factory' && req.type === 'purchase') {
+                    undoStatus = 'production';
+                    roleName = 'مدیر کارخانه';
+                } else if (currentRole === 'warehouse') {
+                    undoStatus = 'production';
+                    roleName = 'انباردار';
+                }
+            } else if (statusBefore === 'approved') {
+                if (currentRole === 'warehouse') {
+                    if (req.type === 'returnable' || req.type === 'consumable') {
+                        undoStatus = 'pending';
+                    } else if (req.type === 'purchase') {
+                        undoStatus = 'production';
+                    }
+                    roleName = 'انباردار';
+                } else if (currentRole === 'production' && (req.type === 'consumable' || req.type === 'purchase')) {
+                    if (req.type === 'consumable') {
+                        undoStatus = 'pending';
+                    } else if (req.type === 'purchase') {
+                        undoStatus = 'production';
+                    }
+                    roleName = 'مدیر تولید';
+                } else if (currentRole === 'factory' && req.type === 'purchase') {
+                    undoStatus = 'production';
+                    roleName = 'مدیر کارخانه';
+                }
+            }
+
+            if (!undoStatus) {
+                alert('شما مجاز به برگشت این تصمیم نیستید.');
+                return;
+            }
+
+            if (confirm('آیا از برگشت تصمیم توسط ' + roleName + ' مطمئن هستید؟\nوضعیت از "' + getStatusText(statusBefore) + '" به "' + getStatusText(undoStatus) + '" تغییر می‌کند.')) {
+                req.status = undoStatus;
+                renderRequests();
+                saveData();
+                showMessage(requestMessage, '🔄 تصمیم توسط ' + roleName + ' برگشت داده شد.', 'success');
+            }
+        }
+
+        // ============================================================
+        //  ثبت درخواست جدید (توسط انباردار)
+        // ============================================================
+        submitRequest.addEventListener('click', function() {
+            var type = requestType.value;
+            var requester = requestRequester.value.trim();
+            var priority = requestPriority.value;
+            var description = requestDescription.value.trim();
+
+            if (currentRole !== 'warehouse') {
+                showMessage(requestMessage, '❌ فقط انباردار می‌تواند درخواست ثبت کند.', 'error');
+                return;
+            }
+
+            if (!requester) {
+                showMessage(requestMessage, '❌ لطفاً نام درخواست‌کننده را وارد کنید.', 'error');
+                return;
+            }
+
+            var items = getRequestItemsData();
+            if (items.length === 0) {
+                showMessage(requestMessage, '❌ حداقل یک قلم کالا باید اضافه کنید.', 'error');
+                return;
+            }
+
+            if (type !== 'purchase') {
+                var insufficientItems = [];
+                for (var i = 0; i < items.length; i++) {
+                    var item = items[i];
+                    var invItem = findItemById(item.itemId);
+                    if (!invItem) {
+                        insufficientItems.push('کالای نامشخص');
+                    } else if (invItem.quantity < item.quantity) {
+                        insufficientItems.push(invItem.name + ' (موجودی: ' + invItem.quantity + ')');
+                    }
+                }
+                if (insufficientItems.length > 0) {
+                    showMessage(requestMessage, '❌ موجودی کافی برای اقلام زیر نیست: ' + insufficientItems.join('، '), 'error');
+                    return;
+                }
+            }
+
+            var requestNumber = generateRequestNumber();
+            var initialStatus = 'approved';
+            if (type === 'purchase') {
+                initialStatus = 'production';
+            }
+
+            var newRequest = {
+                id: nextRequestId++,
+                requestNumber: requestNumber,
+                type: type,
+                items: items,
+                requester: requester,
+                priority: priority,
+                description: description,
+                status: initialStatus,
+                date: new Date().toLocaleDateString('fa-IR')
+            };
+
+            requests.push(newRequest);
+            requestRequester.value = '';
+            requestDescription.value = '';
+            clearRequestItems();
+
+            if (type === 'purchase') {
+                showMessage(requestMessage, '✅ درخواست خرید ' + requestNumber + ' ثبت و برای مدیر تولید ارسال شد.', 'success');
+            } else {
+                showMessage(requestMessage, '✅ درخواست ' + requestNumber + ' ثبت و تایید شد.', 'success');
+            }
+            renderRequests();
+            saveData();
+        });
+
+        // ============================================================
+        //  مشاهده درخواست
+        // ============================================================
+        window.viewRequest = function(id) {
+            var req = findRequestById(id);
+            if (!req) {
+                alert('درخواست یافت نشد!');
+                return;
+            }
+            currentViewRequestId = id;
+            var displayNumber = req.requestNumber || ('#' + req.id);
+            viewRequestTitle.textContent = 'جزئیات درخواست ' + displayNumber;
+            var infoHtml = '';
+            infoHtml += '<div class="info-row"><span class="label">شماره درخواست:</span><span class="value">' + displayNumber +
+                '</span></div>';
+            infoHtml += '<div class="info-row"><span class="label">نوع درخواست:</span><span class="value">' + getRequestTypeText(
+                req.type) + '</span></div>';
+            infoHtml += '<div class="info-row"><span class="label">درخواست‌کننده:</span><span class="value">' + req.requester +
+                '</span></div>';
+            infoHtml += '<div class="info-row"><span class="label">اولویت:</span><span class="value">' + getPriorityText(req
+                .priority) + '</span></div>';
+            infoHtml += '<div class="info-row"><span class="label">وضعیت:</span><span class="value"><span class="request-status ' +
+                getStatusClass(req.status) + '">' + getStatusText(req.status) + '</span></span></div>';
+            infoHtml += '<div class="info-row"><span class="label">تاریخ ثبت:</span><span class="value">' + req.date +
+                '</span></div>';
+            if (req.description) {
+                infoHtml += '<div class="info-row"><span class="label">توضیحات:</span><span class="value">' + req.description +
+                    '</span></div>';
+            }
+            viewRequestInfo.innerHTML = infoHtml;
+
+            var itemsHtml = '<h4 style="margin:15px 0 10px; color:#0f2027;">اقلام درخواستی:</h4>';
+            if (!req.items || req.items.length === 0) {
+                itemsHtml += '<p style="color:#8a9bb5;">هیچ قلمی ثبت نشده است.</p>';
+            } else {
+                for (var i = 0; i < req.items.length; i++) {
+                    var item = req.items[i];
+                    var invItem = findItemById(item.itemId);
+                    var itemName = invItem ? invItem.name : 'نامشخص';
+                    var itemCode = invItem ? invItem.code : '---';
+                    itemsHtml += '<div class="request-item-detail">' +
+                        '<span class="item-name">' + itemName + '</span>' +
+                        '<span class="item-code">' + itemCode + '</span>' +
+                        '<span class="item-quantity">' + item.quantity + ' عدد</span>' +
+                        '</div>';
+                }
+            }
+            viewRequestItems.innerHTML = itemsHtml;
+            viewRequestModal.classList.add('active');
+        };
+
+        closeViewModal.addEventListener('click', function() {
+            viewRequestModal.classList.remove('active');
+            currentViewRequestId = null;
+        });
+
+        viewRequestModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                viewRequestModal.classList.remove('active');
+                currentViewRequestId = null;
+            }
+        });
+
+        viewPdfBtn.addEventListener('click', function() {
+            if (currentViewRequestId) {
+                var req = findRequestById(currentViewRequestId);
+                if (req) {
+                    window.generateRequestPDF(currentViewRequestId);
+                }
+            }
+        });
+
+        // ============================================================
+        //  خروج کالا (توسط انباردار)
+        // ============================================================
+        submitExit.addEventListener('click', function() {
+            var requestId = parseInt(exitRequestSelect.value);
+            var receiver = exitReceiver.value.trim();
+
+            if (currentRole !== 'warehouse') {
+                showMessage(exitMessage, '❌ فقط انباردار می‌تواند خروج کالا ثبت کند.', 'error');
+                return;
+            }
+
+            if (!requestId) {
+                showMessage(exitMessage, '❌ لطفاً یک درخواست تایید شده انتخاب کنید.', 'error');
+                return;
+            }
+            if (!receiver) {
+                showMessage(exitMessage, '❌ لطفاً نام تحویل‌گیرنده را وارد کنید.', 'error');
+                return;
+            }
+
+            var req = findRequestById(requestId);
+            if (!req) {
+                showMessage(exitMessage, '❌ درخواست یافت نشد!', 'error');
+                return;
+            }
+            if (req.status !== 'approved') {
+                showMessage(exitMessage, '❌ این درخواست تایید نهایی نشده است.', 'error');
+                return;
+            }
+            if (req.type === 'purchase') {
+                showMessage(exitMessage, '❌ درخواست خرید قابل خروج از انبار نیست.', 'error');
+                return;
+            }
+
+            var itemNames = [];
+            var totalQty = 0;
+            for (var j = 0; j < req.items.length; j++) {
+                var item = req.items[j];
+                var invItem = findItemById(item.itemId);
+                if (invItem) {
+                    invItem.quantity -= item.quantity;
+                    itemNames.push(invItem.name + ' (' + item.quantity + ' عدد)');
+                    totalQty += item.quantity;
+                }
+            }
+
+            exitHistory.push({
+                id: nextExitId++,
+                requestId: req.id,
+                totalQuantity: totalQty,
+                receiver: receiver,
+                date: new Date().toLocaleDateString('fa-IR') + ' ' + new Date().toLocaleTimeString('fa-IR')
+            });
+
+            req.status = 'delivered';
+            renderTable();
+            updateStats();
+            populateSelects();
+            populateExitRequests();
+            renderExitHistory();
+            updateDatalists();
+            clearRequestItems();
+            saveData();
+            showMessage(exitMessage, '✅ ' + itemNames.join('، ') + ' به ' + receiver + ' تحویل داده شد.', 'success');
+            exitReceiver.value = '';
+        });
+
+        // ============================================================
+        //  ورود کالا (توسط انباردار)
+        // ============================================================
+        submitEntry.addEventListener('click', function() {
+            var id = parseInt(entrySelect.value);
+            var qty = parseInt(entryQuantity.value);
+            var supplier = entrySupplier.value.trim();
+
+            if (currentRole !== 'warehouse') {
+                showMessage(entryMessage, '❌ فقط انباردار می‌تواند ورود کالا ثبت کند.', 'error');
+                return;
+            }
+
+            var item = findItemById(id);
+            if (!item) {
+                showMessage(entryMessage, '❌ کالا یافت نشد!', 'error');
+                return;
+            }
+            if (isNaN(qty) || qty <= 0) {
+                showMessage(entryMessage, '❌ تعداد معتبر وارد کنید!', 'error');
+                return;
+            }
+            if (!supplier) {
+                showMessage(entryMessage, '❌ لطفاً نام تحویل‌دهنده را وارد کنید.', 'error');
+                return;
+            }
+
+            if (confirm('آیا از ورود ' + qty + ' عدد ' + item.name + ' توسط ' + supplier + ' مطمئن هستید؟')) {
+                item.quantity += qty;
+
+                entryHistory.push({
+                    id: nextEntryId++,
+                    itemId: item.id,
+                    quantity: qty,
+                    supplier: supplier,
+                    date: new Date().toLocaleDateString('fa-IR') + ' ' + new Date().toLocaleTimeString('fa-IR')
+                });
+
+                renderTable();
+                updateStats();
+                populateSelects();
+                populateExitRequests();
+                updateDatalists();
+                clearRequestItems();
+                renderEntryHistory();
+                saveData();
+                showMessage(entryMessage, '✅ ' + qty + ' عدد از ' + item.name + ' توسط ' + supplier + ' به انبار اضافه شد. موجودی جدید: ' + item.quantity,
+                    'success');
+                entryQuantity.value = '1';
+                entrySupplier.value = '';
+            }
+        });
+
+        // ============================================================
+        //  منو و ناوبری
+        // ============================================================
+        function showPage(pageId) {
+            for (var i = 0; i < pageContents.length; i++) {
+                pageContents[i].classList.remove('active');
+            }
+            var target = document.getElementById('page-' + pageId);
+            if (target) {
+                target.classList.add('active');
+            }
+            for (var m = 0; m < menuLinks.length; m++) {
+                menuLinks[m].classList.remove('active');
+            }
+            var activeLink = document.querySelector('.navbar-menu a[data-page="' + pageId + '"]');
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+            if (pageId === 'list-items') {
+                renderTable();
+            }
+            if (pageId === 'exit-item') {
+                populateExitRequests();
+                renderExitHistory();
+            }
+            if (pageId === 'entry-item') {
+                populateSelects();
+                renderEntryHistory();
+            }
+            if (pageId === 'add-item') {
+                updateGeneratedCode();
+            }
+            if (pageId === 'dashboard') {
+                updateStats();
+            }
+            if (pageId === 'requests') {
+                renderRequests();
+            }
+        }
+
+        function updateGeneratedCode() {
+            var category = newCategory.value;
+            var code = generateCode(category);
+            generatedCode.textContent = code;
+        }
+
+        // ============================================================
+        //  لاگین و خروج
+        // ============================================================
+        function login() {
+            var user = usernameInput.value.trim();
+            var pass = passwordInput.value.trim();
+            if (user === '' || pass === '') {
+                alert('لطفاً نام کاربری و رمز عبور را وارد کنید.');
+                return;
+            }
+            if (user === credentials.username && pass === credentials.password) {
+                loginPage.style.display = 'none';
+                dashboardWrapper.classList.add('active');
+                displayUser.textContent = user;
+                if (rememberMe.checked) {
+                    localStorage.setItem('rememberedUser', user);
+                    localStorage.setItem('rememberedPass', pass);
+                } else {
+                    localStorage.removeItem('rememberedUser');
+                    localStorage.removeItem('rememberedPass');
+                }
+                loadData();
+                renderTable();
+                updateStats();
+                populateSelects();
+                populateExitRequests();
+                renderRequests();
+                renderExitHistory();
+                renderEntryHistory();
+                showPage('dashboard');
+                clearRequestItems();
+                loadSettings();
+            } else {
+                alert('نام کاربری یا رمز عبور اشتباه است.');
+            }
+        }
+
+        function logout() {
+            if (confirm('آیا مطمئن هستید که می‌خواهید خارج شوید؟')) {
+                saveData();
+                dashboardWrapper.classList.remove('active');
+                loginPage.style.display = 'block';
+                passwordInput.value = '';
+                localStorage.removeItem('rememberedUser');
+                localStorage.removeItem('rememberedPass');
+            }
+        }
+
+        // ============================================================
+        //  تنظیمات
+        // ============================================================
+        function saveSettings() {
+            localStorage.setItem('darkMode', darkModeToggle.checked);
+            localStorage.setItem('notifications', notificationToggle.checked);
+        }
+
+        function loadSettings() {
+            var darkMode = localStorage.getItem('darkMode') === 'true';
+            var notifications = localStorage.getItem('notifications') !== 'false';
+            darkModeToggle.checked = darkMode;
+            notificationToggle.checked = notifications;
+            applyDarkMode(darkMode);
+        }
+
+        function applyDarkMode(enabled) {
+            if (enabled) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            saveSettings();
+        }
+
+        // ============================================================
+        //  رویدادها
+        // ============================================================
+        darkModeToggle.addEventListener('change', function(e) {
+            applyDarkMode(e.target.checked);
+        });
+
+        notificationToggle.addEventListener('change', function() {
+            saveSettings();
+            if (notificationToggle.checked) {
+                showMessage(settingsMessage, '✅ اعلان‌ها فعال شدند.', 'success');
+            } else {
+                showMessage(settingsMessage, '⚠️ اعلان‌ها غیرفعال شدند.', 'error');
+            }
+        });
+
+        backupBtn.addEventListener('click', function() {
+            saveData();
+            var data = {
+                inventory: inventory,
+                requests: requests,
+                exitHistory: exitHistory,
+                entryHistory: entryHistory,
+                credentials: { username: credentials.username },
+                exportDate: new Date().toISOString()
+            };
+            var json = JSON.stringify(data, null, 2);
+            var blob = new Blob([json], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            var dateStr = new Date().toISOString().slice(0, 10);
+            a.download = 'backup_' + dateStr + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showMessage(settingsMessage, '✅ خروجی با موفقیت دریافت شد!', 'success');
+        });
+
+        roleSelector.addEventListener('change', function() {
+            currentRole = this.value;
+            renderRequests();
+        });
+
+        for (var mi = 0; mi < menuLinks.length; mi++) {
+            (function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var page = this.getAttribute('data-page');
+                    if (page) {
+                        showPage(page);
+                    }
+                });
+            })(menuLinks[mi]);
+        }
+
+        loginBtn.addEventListener('click', login);
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && loginPage.style.display !== 'none') {
+                login();
+            }
+        });
+
+        togglePassBtn.addEventListener('click', function() {
+            var type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('fa-eye');
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+
+        navbarLogout.addEventListener('click', logout);
+
+        searchInput.addEventListener('input', function(e) {
+            renderTable();
+        });
+
+        filterStatusSelect.addEventListener('change', function() {
+            renderTable();
+        });
+
+        exportPdfBtn.addEventListener('click', function() {
+            exportInventoryPDF();
+        });
+
+        document.getElementById('lowStockCard').addEventListener('click', function() {
+            filterStatusSelect.value = 'lowStock';
+            searchInput.value = '';
+            showPage('list-items');
+            renderTable();
+        });
+
+        document.getElementById('outOfStockCard').addEventListener('click', function() {
+            filterStatusSelect.value = 'outOfStock';
+            searchInput.value = '';
+            showPage('list-items');
+            renderTable();
+        });
+
+        newCategory.addEventListener('change', updateGeneratedCode);
+
+        submitAddItem.addEventListener('click', function() {
+            var name = newName.value.trim();
+            var category = newCategory.value;
+            var quantity = parseInt(newQuantity.value);
+            var threshold = parseInt(newThreshold.value);
+            var code = generateCode(category);
+            if (!name || !category) {
+                showMessage(addItemMessage, '❌ لطفاً نام و دسته‌بندی کالا را وارد کنید.', 'error');
+                return;
+            }
+            if (isNaN(quantity) || quantity < 0) {
+                showMessage(addItemMessage, '❌ تعداد معتبر وارد کنید.', 'error');
+                return;
+            }
+            if (isNaN(threshold) || threshold < 0) {
+                showMessage(addItemMessage, '❌ حد مجاز معتبر وارد کنید.', 'error');
+                return;
+            }
+            addItem(name, code, category, quantity, threshold);
+            newName.value = '';
+            newCategory.value = '';
+            newQuantity.value = '0';
+            newThreshold.value = '5';
+            generatedCode.textContent = '---';
+            showMessage(addItemMessage, '✅ کالا با کد ' + code + ' ثبت شد!', 'success');
+            updateStats();
+            setTimeout(function() {
+                showPage('list-items');
+            }, 1000);
+        });
+
+        // ===== دکمه‌های PDF تاریخچه =====
+        document.getElementById('exportExitHistoryPdf').addEventListener('click', function() {
+            exportExitHistoryPDF();
+        });
+
+        document.getElementById('exportEntryHistoryPdf').addEventListener('click', function() {
+            exportEntryHistoryPDF();
+        });
+
+        addItemRowBtn.addEventListener('click', function() {
+            addRequestItemRow();
+        });
+
+        requestFilterStatus.addEventListener('change', function() {
+            renderRequests();
+        });
+
+        requestSearch.addEventListener('input', function() {
+            renderRequests();
+        });
+
+        changeUsernameBtn.addEventListener('click', function() {
+            var newUser = settingsUsername.value.trim();
+            if (!newUser) {
+                showMessage(settingsMessage, '❌ لطفاً نام کاربری جدید را وارد کنید.', 'error');
+                return;
+            }
+            if (newUser === credentials.username) {
+                showMessage(settingsMessage, '⚠️ این نام کاربری همان نام فعلی است.', 'error');
+                return;
+            }
+            credentials.username = newUser;
+            displayUser.textContent = newUser;
+            settingsUsername.value = '';
+            showMessage(settingsMessage, '✅ نام کاربری با موفقیت به "' + newUser + '" تغییر یافت.', 'success');
+        });
+
+        changePasswordBtn.addEventListener('click', function() {
+            var current = settingsCurrentPassword.value.trim();
+            var newPass = settingsNewPassword.value.trim();
+            var confirm = settingsConfirmPassword.value.trim();
+            if (!current || !newPass || !confirm) {
+                showMessage(settingsMessage, '❌ لطفاً تمام فیلدهای رمز را پر کنید.', 'error');
+                return;
+            }
+            if (current !== credentials.password) {
+                showMessage(settingsMessage, '❌ رمز فعلی اشتباه است.', 'error');
+                return;
+            }
+            if (newPass.length < 4) {
+                showMessage(settingsMessage, '❌ رمز جدید باید حداقل ۴ کاراکتر باشد.', 'error');
+                return;
+            }
+            if (newPass !== confirm) {
+                showMessage(settingsMessage, '❌ رمز جدید و تکرار آن مطابقت ندارند.', 'error');
+                return;
+            }
+            credentials.password = newPass;
+            settingsCurrentPassword.value = '';
+            settingsNewPassword.value = '';
+            settingsConfirmPassword.value = '';
+            showMessage(settingsMessage, '✅ رمز عبور با موفقیت تغییر یافت.', 'success');
+        });
+
+        editCancelBtn.addEventListener('click', closeEditModal);
+        editModal.addEventListener('click', function(e) {
+            if (e.target === this) closeEditModal();
+        });
+        editSaveBtn.addEventListener('click', saveEdit);
+
+        // ============================================================
+        //  مقداردهی اولیه
+        // ============================================================
+        (function init() {
+            var rememberedUser = localStorage.getItem('rememberedUser');
+            var rememberedPass = localStorage.getItem('rememberedPass');
+            if (rememberedUser && rememberedPass) {
+                usernameInput.value = rememberedUser;
+                passwordInput.value = rememberedPass;
+                rememberMe.checked = true;
+            }
+            updateGeneratedCode();
+            clearRequestItems();
+
+            if (!localStorage.getItem('warehouseData')) {
+                var req1 = {
+                    id: nextRequestId++,
+                    requestNumber: generateRequestNumber(),
+                    type: 'consumable',
+                    items: [{ itemId: 1, quantity: 2 }, { itemId: 8, quantity: 5 }],
+                    requester: 'رضا محمدی',
+                    priority: 'normal',
+                    description: 'برای تعمیرات',
+                    status: 'approved',
+                    date: new Date().toLocaleDateString('fa-IR')
+                };
+                requests.push(req1);
+
+                var req2 = {
+                    id: nextRequestId++,
+                    requestNumber: generateRequestNumber(),
+                    type: 'returnable',
+                    items: [{ itemId: 3, quantity: 1 }],
+                    requester: 'علی کریمی',
+                    priority: 'urgent',
+                    description: 'ابزار مورد نیاز',
+                    status: 'approved',
+                    date: new Date().toLocaleDateString('fa-IR')
+                };
+                requests.push(req2);
+
+                var req3 = {
+                    id: nextRequestId++,
+                    requestNumber: generateRequestNumber(),
+                    type: 'purchase',
+                    items: [{ itemId: 7, quantity: 10 }],
+                    requester: 'سارا حسینی',
+                    priority: 'critical',
+                    description: 'ذخیره اضطراری',
+                    status: 'production',
+                    date: new Date().toLocaleDateString('fa-IR')
+                };
+                requests.push(req3);
+
+                var req4 = {
+                    id: nextRequestId++,
+                    requestNumber: generateRequestNumber(),
+                    type: 'consumable',
+                    items: [{ itemId: 4, quantity: 3 }, { itemId: 6, quantity: 2 }],
+                    requester: 'مهدی احمدی',
+                    priority: 'normal',
+                    description: 'مصرف اداری',
+                    status: 'approved',
+                    date: new Date().toLocaleDateString('fa-IR')
+                };
+                requests.push(req4);
+
+                saveData();
+            } else {
+                loadData();
+            }
+
+            renderEntryHistory();
+
+            console.log('✅ سیستم مدیریت انبار با موفقیت بارگذاری شد!');
+            console.log('📌 نام کاربری: admin');
+            console.log('📌 رمز عبور: 123456');
+            console.log('📌 نقش‌ها: warehouse, production, factory');
+            console.log('📊 تعداد کالاها:', inventory.length);
+            console.log('📋 تعداد درخواست‌ها:', requests.length);
+            console.log('📤 تعداد خروجی‌ها:', exitHistory.length);
+            console.log('📥 تعداد ورودی‌ها:', entryHistory.length);
+        })();
+    </script>
+</body>
+</html>
